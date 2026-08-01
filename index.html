@@ -330,6 +330,55 @@
     text-align:center;
   }
 
+
+  /* ── AJUSTES RESPONSIVOS PARA MÓVIL ── */
+  @media (max-width:899px){
+    header{
+      padding-top:8px;
+    }
+
+    .stage{
+      margin-bottom:18px;
+    }
+
+    .card{
+      min-height:360px;
+      height:360px;
+    }
+
+    .face{
+      padding:24px 20px 28px;
+    }
+
+    .back{
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .definition{
+      margin-top:4px;
+      padding-bottom:4px;
+    }
+
+    .definition .label{
+      margin-bottom:8px;
+    }
+
+    .definition p{
+      font-size:16px;
+      line-height:1.6;
+      overflow-wrap:anywhere;
+      word-break:normal;
+      hyphens:auto;
+    }
+
+    .flip-note{
+      margin-top:4px;
+      line-height:1.5;
+    }
+  }
+
   /* ════════════════════════════════════════════════
      ESCRITORIO ≥ 900px  — layout de dos columnas
   ════════════════════════════════════════════════ */
@@ -1486,11 +1535,14 @@ function render(){
     dot.className = 'dot' + (i===index ? ' current' : i<index ? ' done' : '');
     progressEl.appendChild(dot);
   });
+
+  adjustCardHeight();
 }
 
 card.addEventListener('click', ()=>{
   flipped = !flipped;
   card.classList.toggle('flipped', flipped);
+  adjustCardHeight();
 });
 
 document.getElementById('nextBtn').onclick = ()=>{
@@ -1514,6 +1566,26 @@ document.addEventListener('keydown', (e)=>{
   if(e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
   if(e.key === ' '){ e.preventDefault(); card.click(); }
 });
+
+
+function adjustCardHeight(){
+  const frontFace = card.querySelector('.front');
+  const backFace = card.querySelector('.back');
+  const desktop = window.matchMedia('(min-width: 900px)').matches;
+  const baseHeight = desktop ? 380 : 360;
+
+  // Restablecer primero permite medir correctamente el contenido actual.
+  card.style.height = baseHeight + 'px';
+
+  requestAnimationFrame(() => {
+    const frontHeight = frontFace ? frontFace.scrollHeight : baseHeight;
+    const backHeight = backFace ? backFace.scrollHeight : baseHeight;
+    const requiredHeight = Math.max(baseHeight, frontHeight, backHeight);
+    card.style.height = requiredHeight + 'px';
+  });
+}
+
+window.addEventListener('resize', adjustCardHeight);
 
 resetDeck();
 </script>
