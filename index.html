@@ -35,7 +35,7 @@
     width:100%;
     max-width:520px;
     margin:0 auto;
-    padding:28px 16px 48px;
+    padding:calc(env(safe-area-inset-top) + 32px) 16px calc(env(safe-area-inset-bottom) + 48px);
     display:flex;
     flex-direction:column;
   }
@@ -318,6 +318,12 @@
   }
   footer{
     margin-top:26px;
+  }
+
+  .sidebar{display:none;}
+
+  footer{
+    margin-top:26px;
     font-family:'IBM Plex Mono',monospace;
     font-size:11px;
     color:#8a978e;
@@ -365,6 +371,7 @@
 
     /* SIDEBAR izquierdo con todos los mazos */
     .sidebar{
+      display:flex;
       grid-area:sidebar;
       background:#fff;
       border:1px solid var(--line);
