@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarjetero de Etimología Médica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17231F;
+    --paper:#E7ECE3;
+    --panel:#F5F7F1;
+    --dark:#163430;
+    --dark-2:#0E241F;
+    --amber:#DDA23A;
+    --sage:#5E8778;
+    --clay:#A5522F;
+    --line:#c7cfc0;
+    --radius:22px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ── LAYOUT BASE (MÓVIL) ── */
+  .app{
+    width:100%;
+    max-width:520px;
+    margin:0 auto;
+    padding:28px 16px 48px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  header{
+    text-align:center;
+    margin-bottom:18px;
+  }
+  header .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--sage);
+  }
+  header h1{
+    font-family:'Zilla Slab',serif;
+    font-weight:700;
+    font-size:clamp(26px,6vw,34px);
+    margin:4px 0 0;
+    color:var(--dark-2);
+  }
+
+  /* ── SELECTOR MAZOS (MÓVIL: scroll) ── */
+  .decks-wrap{
+    position:relative;
+    margin:20px 0 6px;
+  }
+  .decks{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    padding:2px 2px 10px;
+    -ms-overflow-style:none;
+    scrollbar-width:none;
+  }
+  .decks::-webkit-scrollbar{ display:none; }
+  .decks button{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:5px;
+    width:72px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    padding:10px 4px 8px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:10px;
+    line-height:1.2;
+    color:var(--ink);
+    border-radius:14px;
+    cursor:pointer;
+    transition:background .18s, color .18s, border-color .18s, box-shadow .18s;
+  }
+  .decks button:hover{
+    border-color:var(--sage);
+    box-shadow:0 0 0 3px rgba(94,135,120,.12);
+  }
+  .decks button svg{
+    width:20px; height:20px;
+    stroke:var(--sage);
+    fill:none;
+    stroke-width:1.6;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    transition:stroke .18s;
+  }
+  .decks button.active{
+    background:var(--dark);
+    border-color:var(--dark);
+    color:var(--paper);
+    box-shadow:none;
+  }
+  .decks button.active svg{ stroke:var(--paper); }
+  .deck-hint{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;
+    color:#9aa79f;
+    text-align:center;
+    margin:-4px 0 10px;
+  }
+
+  /* ── META ROW ── */
+  .meta-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:#4a5750;
+    margin-bottom:10px;
+    padding:0 4px;
+  }
+  .meta-row button{
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink);
+    border-radius:8px;
+    padding:6px 10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .meta-row button:hover{ background:#fff; }
+
+  /* ── CARD ── */
+  .stage{
+    perspective:1400px;
+    margin-bottom:18px;
+  }
+  .card{
+    position:relative;
+    width:100%;
+    min-height:300px;
+    transform-style:preserve-3d;
+    transition:transform .55s cubic-bezier(.2,.7,.3,1);
+    cursor:pointer;
+  }
+  .card.flipped{ transform:rotateY(180deg); }
+  .face{
+    position:absolute;
+    inset:0;
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+    border-radius:var(--radius);
+    display:flex;
+    flex-direction:column;
+    padding:28px 24px;
+  }
+  .front{
+    background:var(--dark);
+    color:var(--paper);
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:14px;
+  }
+  .front .term{
+    font-family:'Zilla Slab',serif;
+    font-weight:700;
+    font-size:clamp(28px,7.5vw,40px);
+    line-height:1.15;
+    letter-spacing:.01em;
+  }
+  .front .hint{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#9fb8ac;
+  }
+  .back{
+    background:var(--panel);
+    border:1px solid var(--line);
+    transform:rotateY(180deg);
+    justify-content:flex-start;
+  }
+  .back .term-sm{
+    font-family:'Zilla Slab',serif;
+    font-weight:600;
+    font-size:19px;
+    color:var(--dark-2);
+    margin-bottom:14px;
+  }
+  .fragments{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .frag{
+    flex:1 1 auto;
+    min-width:84px;
+    border-radius:12px;
+    padding:9px 11px 10px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-top:3px dashed var(--tagcolor);
+  }
+  .frag .piece{
+    font-family:'Zilla Slab',serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--ink);
+  }
+  .frag .tag{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:#fff;
+    background:var(--tagcolor);
+    border-radius:5px;
+    padding:1px 6px;
+    margin-top:6px;
+    margin-bottom:4px;
+  }
+  .frag .meaning{
+    font-size:12.5px;
+    color:#3d493f;
+    display:block;
+  }
+  .frag.prefijo{ --tagcolor:var(--amber); }
+  .frag.raiz{ --tagcolor:var(--sage); }
+  .frag.sufijo{ --tagcolor:var(--clay); }
+  .suture{
+    border-top:1px dashed var(--line);
+    margin:2px 0 14px;
+  }
+  .definition .label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--sage);
+    display:block;
+    margin-bottom:4px;
+  }
+  .definition p{
+    font-family:'Inter',sans-serif;
+    font-size:15.5px;
+    line-height:1.45;
+    margin:0;
+    color:var(--dark-2);
+  }
+  .flip-note{
+    text-align:center;
+    font-size:11px;
+    font-family:'IBM Plex Mono',monospace;
+    color:#8a978e;
+    margin:-6px 0 18px;
+  }
+  .progress{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .progress .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--line);
+  }
+  .progress .dot.done{ background:var(--sage); }
+  .progress .dot.current{ background:var(--dark); transform:scale(1.3); }
+  .nav{
+    display:flex;
+    gap:10px;
+  }
+  .nav button{
+    flex:1;
+    padding:13px 10px;
+    border-radius:12px;
+    border:1px solid var(--dark);
+    background:var(--dark);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:opacity .15s;
+  }
+  .nav button:hover{ opacity:.85; }
+  .nav button.ghost{
+    background:transparent;
+    color:var(--dark);
+  }
+  .nav button:active{ transform:translateY(1px); }
+  .nav button:focus-visible, .decks button:focus-visible, .meta-row button:focus-visible{
+    outline:2px solid var(--clay);
+    outline-offset:2px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card{ transition:none; }
+  }
+  footer{
+    margin-top:26px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:#8a978e;
+    text-align:center;
+  }
+
+  /* ════════════════════════════════════════════════
+     ESCRITORIO ≥ 900px  — layout de dos columnas
+  ════════════════════════════════════════════════ */
+  @media (min-width:900px){
+
+    body{
+      background: linear-gradient(135deg, #d4dcd1 0%, #e7ece3 60%);
+      display:grid;
+      place-items:start center;
+      padding:40px 32px 60px;
+    }
+
+    .app{
+      max-width:1100px;
+      padding:0;
+      display:grid;
+      grid-template-columns:260px 1fr;
+      grid-template-rows:auto 1fr auto;
+      grid-template-areas:
+        "header  header"
+        "sidebar main"
+        "footer  footer";
+      gap:0 32px;
+    }
+
+    /* ENCABEZADO ancho completo */
+    header{
+      grid-area:header;
+      text-align:left;
+      margin-bottom:28px;
+      padding-bottom:20px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:baseline;
+      gap:20px;
+    }
+    header h1{ font-size:32px; margin:0; }
+    header .eyebrow{ font-size:11px; white-space:nowrap; }
+
+    /* SIDEBAR izquierdo con todos los mazos */
+    .sidebar{
+      grid-area:sidebar;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:20px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-self:start;
+      position:sticky;
+      top:40px;
+      max-height:calc(100vh - 100px);
+      overflow-y:auto;
+      scrollbar-width:thin;
+      scrollbar-color: var(--line) transparent;
+    }
+    .sidebar-title{
+      font-family:'IBM Plex Mono',monospace;
+      font-size:10px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--sage);
+      padding:0 6px 8px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:4px;
+    }
+    .sidebar-btn{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      width:100%;
+      border:1px solid transparent;
+      background:transparent;
+      padding:9px 10px;
+      font-family:'Inter',sans-serif;
+      font-weight:500;
+      font-size:13px;
+      color:var(--ink);
+      border-radius:10px;
+      cursor:pointer;
+      text-align:left;
+      transition:background .15s, border-color .15s, color .15s;
+    }
+    .sidebar-btn svg{
+      flex:0 0 18px;
+      width:18px; height:18px;
+      stroke:var(--sage);
+      fill:none;
+      stroke-width:1.6;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      transition:stroke .15s;
+    }
+    .sidebar-btn:hover{
+      background:var(--paper);
+      border-color:var(--line);
+    }
+    .sidebar-btn.active{
+      background:var(--dark);
+      color:var(--paper);
+      border-color:var(--dark);
+      font-weight:600;
+    }
+    .sidebar-btn.active svg{ stroke:var(--paper); }
+    .sidebar-count{
+      margin-left:auto;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:10px;
+      color:#8a978e;
+      flex-shrink:0;
+    }
+    .sidebar-btn.active .sidebar-count{ color:#9fb8ac; }
+
+    /* ÁREA PRINCIPAL */
+    .main-area{
+      grid-area:main;
+      display:flex;
+      flex-direction:column;
+    }
+
+    /* Ocultar selector de chips en escritorio */
+    .decks-wrap, .deck-hint{ display:none !important; }
+
+    .meta-row{
+      font-size:13px;
+      margin-bottom:14px;
+      padding:0;
+    }
+    .meta-row button{
+      padding:8px 14px;
+      font-size:12px;
+      border-radius:10px;
+    }
+
+    .stage{ margin-bottom:22px; }
+    .card{ min-height:380px; }
+    .face{ padding:40px 48px; }
+    .front .term{ font-size:clamp(36px,4vw,52px); }
+    .front .hint{ font-size:13px; }
+    .back .term-sm{ font-size:22px; margin-bottom:20px; }
+    .frag{ min-width:100px; padding:11px 14px 12px; }
+    .frag .piece{ font-size:19px; }
+    .frag .tag{ font-size:10px; }
+    .frag .meaning{ font-size:13.5px; }
+    .definition p{ font-size:17px; line-height:1.5; }
+
+    .flip-note{ font-size:12px; margin-bottom:20px; }
+
+    .progress{ gap:7px; margin-bottom:22px; }
+    .progress .dot{ width:8px; height:8px; }
+
+    .nav button{
+      padding:15px 10px;
+      font-size:15px;
+      border-radius:14px;
+    }
+
+    footer{
+      grid-area:footer;
+      margin-top:32px;
+      font-size:12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <span class="eyebrow">Tópicos de Salud · Raíces Grecolatinas</span>
+    <h1>Tarjetero de Etimología Médica</h1>
+  </header>
+
+  <!-- SIDEBAR (solo visible en escritorio) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title">Mazos</div>
+  </aside>
+
+  <!-- ÁREA PRINCIPAL -->
+  <div class="main-area">
+
+    <div class="decks-wrap">
+      <div class="decks" id="deckSwitch"></div>
+    </div>
+    <div class="deck-hint">◁ desliza para ver los 14 mazos ▷</div>
+
+    <div class="meta-row">
+      <span id="counter">1 / 5</span>
+      <button id="shuffleBtn">⤮ Mezclar</button>
+    </div>
+
+    <div class="stage">
+      <div class="card" id="card">
+        <div class="face front">
+          <div class="term" id="termFront"></div>
+          <div class="hint">Clic para descifrar el significado</div>
+        </div>
+        <div class="face back">
+          <div class="term-sm" id="termBack"></div>
+          <div class="fragments" id="fragments"></div>
+          <div class="suture"></div>
+          <div class="definition">
+            <span class="label">Significado</span>
+            <p id="definition"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-note">clic / toque = voltear · ← → = navegar · espacio = voltear</div>
+
+    <div class="progress" id="progress"></div>
+
+    <div class="nav">
+      <button class="ghost" id="prevBtn">◁ Anterior</button>
+      <button id="nextBtn">Siguiente ▷</button>
+    </div>
+
+  </div><!-- /main-area -->
+
+  <footer>Basado en NOM-004-SSA3-2012 · raíces griegas y latinas de uso clínico</footer>
+</div>
+
+<script>
+const DECKS = {
+  endocrinologia: {
+    label: "Endocrinología",
+    cards: [
+      { term:"Hiperglucemia", def:"Exceso de glucosa en la sangre.", parts:[
+        {tag:"prefijo",piece:"hiper-",meaning:"exceso, alto"},
+        {tag:"raiz",piece:"gluc-",meaning:"glucosa"},
+        {tag:"sufijo",piece:"-emia",meaning:"sangre"} ]},
+      { term:"Polidipsia", def:"Sed excesiva.", parts:[
+        {tag:"prefijo",piece:"poli-",meaning:"mucho"},
+        {tag:"raiz",piece:"dips-",meaning:"sed"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Adrenalectomía", def:"Extirpación quirúrgica de la glándula suprarrenal.", parts:[
+        {tag:"raiz",piece:"adrenal-",meaning:"glándula suprarrenal"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Hipopituitarismo", def:"Insuficiencia en la función de la hipófisis.", parts:[
+        {tag:"prefijo",piece:"hipo-",meaning:"debajo, insuficiencia"},
+        {tag:"raiz",piece:"pituitar-",meaning:"hipófisis"},
+        {tag:"sufijo",piece:"-ismo",meaning:"condición"} ]},
+      { term:"Hipotiroidismo", def:"Insuficiencia en la función de la tiroides.", parts:[
+        {tag:"prefijo",piece:"hipo-",meaning:"debajo, insuficiencia"},
+        {tag:"raiz",piece:"tiroid-",meaning:"tiroides"},
+        {tag:"sufijo",piece:"-ismo",meaning:"condición"} ]},
+      { term:"Adenopatía", def:"Enfermedad ganglionar, en especial de los ganglios linfáticos.", parts:[
+        {tag:"raiz",piece:"adeno-",meaning:"glándula, ganglio"},
+        {tag:"sufijo",piece:"-patía",meaning:"enfermedad"} ]},
+      { term:"Adrenomegalia", def:"Aumento del volumen de las glándulas suprarrenales.", parts:[
+        {tag:"raiz",piece:"adrenal-",meaning:"glándula suprarrenal"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Endocrinopatía", def:"Término general para los trastornos de las glándulas endocrinas y sus secreciones.", parts:[
+        {tag:"prefijo",piece:"endo-",meaning:"interno"},
+        {tag:"raiz",piece:"crino-",meaning:"secreción"},
+        {tag:"sufijo",piece:"-patía",meaning:"enfermedad"} ]},
+      { term:"Hipogonadismo", def:"Trastorno que resulta de la deficiente secreción de las gónadas.", parts:[
+        {tag:"prefijo",piece:"hipo-",meaning:"debajo, insuficiencia"},
+        {tag:"raiz",piece:"gonado-",meaning:"glándula sexual"},
+        {tag:"sufijo",piece:"-ismo",meaning:"condición"} ]},
+      { term:"Gonadectomía", def:"Extirpación quirúrgica de un ovario o de un testículo.", parts:[
+        {tag:"raiz",piece:"gonado-",meaning:"glándula sexual"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Hipofisectomía", def:"Extirpación quirúrgica de la hipófisis.", parts:[
+        {tag:"raiz",piece:"hipófisis-",meaning:"glándula hipófisis"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Pituitarismo", def:"Trastorno de la función de la hipófisis.", parts:[
+        {tag:"raiz",piece:"pituitario-",meaning:"hipófisis"},
+        {tag:"sufijo",piece:"-ismo",meaning:"condición"} ]},
+      { term:"Timitis", def:"Inflamación del timo.", parts:[
+        {tag:"raiz",piece:"timo-",meaning:"glándula timo"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Tiroiditis", def:"Inflamación de la tiroides.", parts:[
+        {tag:"raiz",piece:"tiro-",meaning:"glándula tiroides"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Tirotoxicosis", def:"Estado tóxico producido por un exceso de hormona tiroidea.", parts:[
+        {tag:"raiz",piece:"tiro-",meaning:"glándula tiroides"},
+        {tag:"sufijo",piece:"-toxicosis",meaning:"estado tóxico"} ]},
+    ]
+  },
+  nervioso: {
+    label: "Sistema Nervioso",
+    cards: [
+      { term:"Encéfalo", def:"Término médico para el cerebro.", parts:[
+        {tag:"raiz",piece:"encéfalo",meaning:"cerebro"} ]},
+      { term:"Mielo-", def:"Raíz que indica médula (ósea o espinal).", parts:[
+        {tag:"raiz",piece:"mielo-",meaning:"médula"} ]},
+      { term:"Neuro-", def:"Raíz que indica nervio o sistema nervioso.", parts:[
+        {tag:"raiz",piece:"neuro-",meaning:"nervio"} ]},
+      { term:"Espina bífida", def:"Malformación congénita por fusión incompleta de la columna.", parts:[
+        {tag:"raiz",piece:"espina",meaning:"columna vertebral"},
+        {tag:"sufijo",piece:"bífida",meaning:"dividida en dos"} ]},
+      { term:"Meningo-", def:"Raíz que indica las meninges.", parts:[
+        {tag:"raiz",piece:"meningo-",meaning:"meninges"} ]},
+      { term:"Meningocele", def:"Protrusión de las meninges.", parts:[
+        {tag:"raiz",piece:"meningo-",meaning:"meninges"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
+      { term:"Mielocele", def:"Protrusión de la médula espinal.", parts:[
+        {tag:"raiz",piece:"mielo-",meaning:"médula"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
+      { term:"Mielomeningocele", def:"Protrusión conjunta de médula y meninges.", parts:[
+        {tag:"raiz",piece:"mielo-",meaning:"médula"},
+        {tag:"raiz",piece:"meningo-",meaning:"meninges"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
+      { term:"Meningitis", def:"Inflamación de las meninges.", parts:[
+        {tag:"raiz",piece:"meningo-",meaning:"meninges"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Craneotomía", def:"Apertura quirúrgica del cráneo.", parts:[
+        {tag:"raiz",piece:"craneo-",meaning:"cráneo"},
+        {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
+      { term:"Epilepsia", def:"Crisis por descargas eléctricas anómalas; literalmente, «agarrar desde arriba».", parts:[
+        {tag:"prefijo",piece:"epi-",meaning:"sobre"},
+        {tag:"raiz",piece:"lepsis",meaning:"agarrar o sujetar"} ]},
+      { term:"Descerebración", def:"Pérdida de la función cerebral.", parts:[
+        {tag:"prefijo",piece:"des-",meaning:"cesación"},
+        {tag:"raiz",piece:"cerebro",meaning:"cerebro"},
+        {tag:"sufijo",piece:"-ación",meaning:"acción y efecto"} ]},
+      { term:"Decorticación", def:"Pérdida de la función de la corteza cerebral.", parts:[
+        {tag:"prefijo",piece:"de-",meaning:"cesación"},
+        {tag:"raiz",piece:"cort-",meaning:"corteza"},
+        {tag:"sufijo",piece:"-ción",meaning:"acción"} ]},
+      { term:"Anencefalia", def:"Ausencia congénita del encéfalo.", parts:[
+        {tag:"prefijo",piece:"an-",meaning:"sin"},
+        {tag:"raiz",piece:"encéfalo",meaning:"cerebro"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Craneosinostosis", def:"Fusión prematura de las suturas craneales.", parts:[
+        {tag:"raiz",piece:"craneo-",meaning:"cráneo"},
+        {tag:"raiz",piece:"sin-",meaning:"unión"},
+        {tag:"raiz",piece:"osteo-",meaning:"hueso"},
+        {tag:"sufijo",piece:"-osis",meaning:"condición"} ]},
+      { term:"Blefaroptosis", def:"Caída del párpado.", parts:[
+        {tag:"raiz",piece:"blefaro-",meaning:"párpado"},
+        {tag:"sufijo",piece:"-ptosis",meaning:"caída, desplazamiento hacia abajo"} ]},
+      { term:"Anisocoria", def:"Desigualdad en el tamaño de las pupilas.", parts:[
+        {tag:"prefijo",piece:"aniso-",meaning:"desigual"},
+        {tag:"raiz",piece:"cor-",meaning:"pupila"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Hemiplejía", def:"Parálisis de una mitad lateral del cuerpo.", parts:[
+        {tag:"prefijo",piece:"hemi-",meaning:"mitad"},
+        {tag:"sufijo",piece:"-plejía",meaning:"parálisis"} ]},
+      { term:"Afasia", def:"Incapacidad de emitir palabras.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"fas-",meaning:"palabra"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Agorafobia", def:"Temor a los espacios abiertos.", parts:[
+        {tag:"raiz",piece:"agora-",meaning:"espacios abiertos"},
+        {tag:"sufijo",piece:"-fobia",meaning:"temor patológico"} ]},
+      { term:"Esquizofrenia", def:"Literalmente, mente dividida.", parts:[
+        {tag:"raiz",piece:"esquizo-",meaning:"dividido"},
+        {tag:"sufijo",piece:"-frenia",meaning:"mente"} ]},
+      { term:"Agnosia", def:"Incapacidad para conocer o reconocer.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"gnosis",meaning:"conocimiento"} ]},
+      { term:"Dislalia", def:"Habla imperfecta.", parts:[
+        {tag:"prefijo",piece:"dis-",meaning:"alterado, difícil"},
+        {tag:"raiz",piece:"lal-",meaning:"hablar"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Dislexia", def:"Lectura imperfecta.", parts:[
+        {tag:"prefijo",piece:"dis-",meaning:"alterado, difícil"},
+        {tag:"raiz",piece:"lex-",meaning:"leer"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Mielitis", def:"Inflamación de la médula.", parts:[
+        {tag:"raiz",piece:"mielo-",meaning:"médula espinal"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Polineuritis", def:"Inflamación de muchos nervios.", parts:[
+        {tag:"prefijo",piece:"poli-",meaning:"mucho"},
+        {tag:"raiz",piece:"neuro-",meaning:"nervio"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Miringotomía", def:"Incisión en el tímpano.", parts:[
+        {tag:"raiz",piece:"miringo-",meaning:"tímpano"},
+        {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
+      { term:"Rizotomía", def:"Corte de una raíz nerviosa.", parts:[
+        {tag:"raiz",piece:"rizo-",meaning:"raíz"},
+        {tag:"sufijo",piece:"-tomía",meaning:"incisión, corte"} ]},
+      { term:"Otosclerosis", def:"Endurecimiento (esclerosis) del oído.", parts:[
+        {tag:"raiz",piece:"oto-",meaning:"oído"},
+        {tag:"sufijo",piece:"-sclerosis",meaning:"dureza"} ]},
+      { term:"Sonambulismo", def:"Estado en que, dormido, se realizan caminatas y actos motores habituales.", parts:[
+        {tag:"raiz",piece:"son-",meaning:"sueño"},
+        {tag:"raiz",piece:"ambul-",meaning:"andar, pasearse"} ]},
+      { term:"Encefalocele", def:"Protrusión del tejido cerebral a través de un defecto del cráneo.", parts:[
+        {tag:"raiz",piece:"encéfalo-",meaning:"encéfalo"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
+      { term:"Encefalorragia", def:"Hemorragia del cerebro.", parts:[
+        {tag:"raiz",piece:"encéfalo-",meaning:"encéfalo"},
+        {tag:"sufijo",piece:"-rragia",meaning:"derrame, hemorragia"} ]},
+      { term:"Anestesia", def:"Privación total o parcial de la sensibilidad general.", parts:[
+        {tag:"prefijo",piece:"an-",meaning:"sin"},
+        {tag:"raiz",piece:"estesia",meaning:"sensibilidad"} ]},
+      { term:"Poliomielitis", def:"Inflamación y degeneración de la sustancia gris de la médula espinal.", parts:[
+        {tag:"prefijo",piece:"polio-",meaning:"mucho, gris"},
+        {tag:"raiz",piece:"mielo-",meaning:"médula espinal"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Meningioma", def:"Tumor intracraneal derivado de la aracnoides.", parts:[
+        {tag:"raiz",piece:"mening(o)-",meaning:"meninges"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Amnesia", def:"Pérdida de la memoria por lesión cerebral o choque emocional grave.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"mnesia",meaning:"memoria, recordar"} ]},
+      { term:"Neuralgia", def:"Dolor intenso a lo largo del recorrido de un nervio.", parts:[
+        {tag:"raiz",piece:"neuro-",meaning:"nervio"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Hipertimia", def:"Aumento de la emotividad o actividad excesiva.", parts:[
+        {tag:"prefijo",piece:"hiper-",meaning:"exceso"},
+        {tag:"raiz",piece:"-timia",meaning:"mente, afectividad"} ]},
+    ]
+  },
+  sufijosprefijos: {
+    label: "Sufijos y Prefijos",
+    cards: [
+      { term:"Mialgia", def:"Dolor muscular.", parts:[
+        {tag:"raiz",piece:"mi-",meaning:"músculo"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Bronquiectasia", def:"Dilatación de un bronquio.", parts:[
+        {tag:"raiz",piece:"bronqui-",meaning:"bronquio"},
+        {tag:"sufijo",piece:"-ectasia",meaning:"dilatación"} ]},
+      { term:"Broncoespasmo", def:"Contracción de los bronquios.", parts:[
+        {tag:"raiz",piece:"bronco-",meaning:"bronquio"},
+        {tag:"sufijo",piece:"-espasmo",meaning:"contracción"} ]},
+      { term:"Litiasis", def:"Proceso o estado caracterizado por la aparición de piedras.", parts:[
+        {tag:"raiz",piece:"lit-",meaning:"piedra"},
+        {tag:"sufijo",piece:"-iasis",meaning:"proceso o estado morboso"} ]},
+      { term:"Citólisis", def:"Desintegración de la célula.", parts:[
+        {tag:"raiz",piece:"cito-",meaning:"célula"},
+        {tag:"sufijo",piece:"-lisis",meaning:"desintegración"} ]},
+      { term:"Osteomalacia", def:"Reblandecimiento del hueso.", parts:[
+        {tag:"raiz",piece:"osteo-",meaning:"hueso"},
+        {tag:"sufijo",piece:"-malacia",meaning:"reblandecimiento"} ]},
+      { term:"Hepatomegalia", def:"Agrandamiento del hígado.", parts:[
+        {tag:"raiz",piece:"hepato-",meaning:"hígado"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Cardiopatía", def:"Enfermedad del corazón.", parts:[
+        {tag:"raiz",piece:"cardio-",meaning:"corazón"},
+        {tag:"sufijo",piece:"-patía",meaning:"enfermedad"} ]},
+      { term:"Pancitopenia", def:"Deficiencia de todas las células sanguíneas.", parts:[
+        {tag:"prefijo",piece:"pan-",meaning:"todo"},
+        {tag:"raiz",piece:"cito-",meaning:"célula"},
+        {tag:"sufijo",piece:"-penia",meaning:"deficiencia"} ]},
+      { term:"Hemorragia", def:"Derrame de sangre.", parts:[
+        {tag:"raiz",piece:"hemo-",meaning:"sangre"},
+        {tag:"sufijo",piece:"-rragia",meaning:"derrame"} ]},
+      { term:"Toracocentesis", def:"Punción del tórax.", parts:[
+        {tag:"raiz",piece:"toraco-",meaning:"tórax"},
+        {tag:"sufijo",piece:"-centesis",meaning:"punción"} ]},
+      { term:"Rinoplastia", def:"Modelado quirúrgico de la nariz.", parts:[
+        {tag:"raiz",piece:"rino-",meaning:"nariz"},
+        {tag:"sufijo",piece:"-plastia",meaning:"modelado quirúrgico"} ]},
+      { term:"Astenia", def:"Sin fuerza.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"sten-",meaning:"fuerza"} ]},
+      { term:"Abducción", def:"Movimiento de separación desde el centro.", parts:[
+        {tag:"prefijo",piece:"ab-",meaning:"separación desde"},
+        {tag:"sufijo",piece:"-ducción",meaning:"movimiento, conducción"} ]},
+      { term:"Antipirético", def:"Contra la fiebre.", parts:[
+        {tag:"prefijo",piece:"anti-",meaning:"contra"},
+        {tag:"raiz",piece:"piret-",meaning:"fiebre"} ]},
+      { term:"Bradicardia", def:"Ritmo cardíaco enlentecido.", parts:[
+        {tag:"prefijo",piece:"bradi-",meaning:"lento"},
+        {tag:"raiz",piece:"cardi-",meaning:"corazón"} ]},
+      { term:"Disnea", def:"Respiración difícil.", parts:[
+        {tag:"prefijo",piece:"dis-",meaning:"difícil"},
+        {tag:"raiz",piece:"-nea",meaning:"respiración"} ]},
+      { term:"Endocardio", def:"Membrana que tapiza el interior del corazón.", parts:[
+        {tag:"prefijo",piece:"endo-",meaning:"dentro, interior"},
+        {tag:"raiz",piece:"cardio-",meaning:"corazón"} ]},
+      { term:"Intraperitoneal", def:"Dentro del peritoneo.", parts:[
+        {tag:"prefijo",piece:"intra-",meaning:"dentro de"},
+        {tag:"raiz",piece:"peritoneo",meaning:"membrana abdominal"} ]},
+      { term:"Mononeuritis", def:"Inflamación de un solo nervio.", parts:[
+        {tag:"prefijo",piece:"mono-",meaning:"uno"},
+        {tag:"raiz",piece:"neuro-",meaning:"nervio"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+    ]
+  },
+  locomotor: {
+    label: "Sistema Locomotor",
+    cards: [
+      { term:"Acromegalia", def:"Agrandamiento de los huesos y partes blandas de manos, pies, cara y cabeza.", parts:[
+        {tag:"raiz",piece:"acro-",meaning:"extremidades, lo más alto"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Artritis", def:"Inflamación en una articulación.", parts:[
+        {tag:"raiz",piece:"artro-",meaning:"articulación"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Artrocentesis", def:"Punción de una articulación, generalmente para extraer líquido.", parts:[
+        {tag:"raiz",piece:"artro-",meaning:"articulación"},
+        {tag:"sufijo",piece:"-centesis",meaning:"punción"} ]},
+      { term:"Braquialgia", def:"Dolor en el brazo.", parts:[
+        {tag:"raiz",piece:"braqui-",meaning:"brazo"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Cefalalgia", def:"Dolor de cabeza.", parts:[
+        {tag:"raiz",piece:"cefal-",meaning:"cabeza"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Macrocéfalo", def:"Individuo que tiene el cráneo excesivamente grande.", parts:[
+        {tag:"prefijo",piece:"macro-",meaning:"grande"},
+        {tag:"raiz",piece:"céfalo",meaning:"cabeza"} ]},
+      { term:"Condritis", def:"Inflamación de cartílagos.", parts:[
+        {tag:"raiz",piece:"condro-",meaning:"cartílago"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Condrectomía", def:"Extirpación de un cartílago.", parts:[
+        {tag:"raiz",piece:"condro-",meaning:"cartílago"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Costectomía", def:"Resección quirúrgica de una costilla.", parts:[
+        {tag:"raiz",piece:"costo-",meaning:"costilla"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Coxalgia", def:"Dolor en la articulación de la cadera.", parts:[
+        {tag:"raiz",piece:"coxo-",meaning:"cadera"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Craneomalacia", def:"Reblandecimiento de los huesos del cráneo.", parts:[
+        {tag:"raiz",piece:"craneo-",meaning:"cráneo"},
+        {tag:"sufijo",piece:"-malacia",meaning:"reblandecimiento"} ]},
+      { term:"Dactilomegalia", def:"Tamaño excesivo de los dedos.", parts:[
+        {tag:"raiz",piece:"dactilo-",meaning:"dedo"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Desmorrexis", def:"Ruptura de ligamentos.", parts:[
+        {tag:"raiz",piece:"desmo-",meaning:"ligamento"},
+        {tag:"sufijo",piece:"-rrexis",meaning:"ruptura"} ]},
+      { term:"Espondilodesis", def:"Fijación quirúrgica de dos o más vértebras.", parts:[
+        {tag:"raiz",piece:"espondilo-",meaning:"vértebra"},
+        {tag:"sufijo",piece:"-desis",meaning:"fijación, unión"} ]},
+      { term:"Espondilolistesis", def:"Deslizamiento de una vértebra sobre otra.", parts:[
+        {tag:"raiz",piece:"espondilo-",meaning:"vértebra"},
+        {tag:"sufijo",piece:"-listesis",meaning:"deslizamiento"} ]},
+      { term:"Facioplejía", def:"Parálisis facial.", parts:[
+        {tag:"raiz",piece:"facio-",meaning:"cara"},
+        {tag:"sufijo",piece:"-plejía",meaning:"parálisis"} ]},
+      { term:"Gnatosquisis", def:"Fisura o hendidura del maxilar.", parts:[
+        {tag:"raiz",piece:"gnato-",meaning:"mandíbula, maxilar"},
+        {tag:"sufijo",piece:"-squisis",meaning:"fisura, separación"} ]},
+      { term:"Osteomielitis", def:"Infección del hueso y su médula.", parts:[
+        {tag:"raiz",piece:"osteo-",meaning:"hueso"},
+        {tag:"raiz",piece:"mielo-",meaning:"médula ósea"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Raquicentesis", def:"Punción en el conducto raquídeo para extraer líquido cefalorraquídeo.", parts:[
+        {tag:"raiz",piece:"raqui-",meaning:"columna vertebral"},
+        {tag:"sufijo",piece:"-centesis",meaning:"punción"} ]},
+      { term:"Tenodesis", def:"Fijación quirúrgica del extremo de un tendón a un hueso.", parts:[
+        {tag:"raiz",piece:"teno-",meaning:"tendón"},
+        {tag:"sufijo",piece:"-desis",meaning:"fijación, unión"} ]},
+    ]
+  },
+  respiratorio: {
+    label: "Aparato Respiratorio",
+    cards: [
+      { term:"Aerofagia", def:"Deglución de aire.", parts:[
+        {tag:"raiz",piece:"aero-",meaning:"aire, gas"},
+        {tag:"sufijo",piece:"-fagia",meaning:"acción de tragar"} ]},
+      { term:"Broncoscopía", def:"Examen con instrumento óptico del árbol traqueobronquial.", parts:[
+        {tag:"raiz",piece:"bronco-",meaning:"bronquio"},
+        {tag:"sufijo",piece:"-scopía",meaning:"visualización, examen"} ]},
+      { term:"Cordectomía", def:"Extirpación quirúrgica de una cuerda vocal.", parts:[
+        {tag:"raiz",piece:"cordo-",meaning:"cuerda vocal"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Corditis", def:"Inflamación de una cuerda vocal.", parts:[
+        {tag:"raiz",piece:"cordo-",meaning:"cuerda vocal"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Cordopexia", def:"Fijación quirúrgica de una cuerda vocal.", parts:[
+        {tag:"raiz",piece:"cordo-",meaning:"cuerda vocal"},
+        {tag:"sufijo",piece:"-pexia",meaning:"fijación"} ]},
+      { term:"Faringodinia", def:"Dolor en la faringe.", parts:[
+        {tag:"raiz",piece:"faringo-",meaning:"faringe"},
+        {tag:"sufijo",piece:"-odinia",meaning:"dolor"} ]},
+      { term:"Faringolaringitis", def:"Inflamación de la faringe y la laringe.", parts:[
+        {tag:"raiz",piece:"faringo-",meaning:"faringe"},
+        {tag:"raiz",piece:"laringo-",meaning:"laringe"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Afonía", def:"Pérdida o disminución de la voz.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"fono",meaning:"voz, sonido"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Laringectomía", def:"Extirpación de la laringe.", parts:[
+        {tag:"raiz",piece:"laringo-",meaning:"laringe"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Laringorrafia", def:"Sutura de la laringe.", parts:[
+        {tag:"raiz",piece:"laringo-",meaning:"laringe"},
+        {tag:"sufijo",piece:"-rrafia",meaning:"sutura"} ]},
+      { term:"Neumotórax", def:"Presencia de aire en la cavidad torácica, en la pleura.", parts:[
+        {tag:"raiz",piece:"neumo-",meaning:"pulmón, aire"},
+        {tag:"raiz",piece:"tórax",meaning:"tórax"} ]},
+      { term:"Neumopatía", def:"Término general para las enfermedades de los pulmones.", parts:[
+        {tag:"raiz",piece:"neumo-",meaning:"pulmón, aire"},
+        {tag:"sufijo",piece:"-patía",meaning:"enfermedad"} ]},
+      { term:"Anosmia", def:"Pérdida del sentido del olfato.", parts:[
+        {tag:"prefijo",piece:"an-",meaning:"sin"},
+        {tag:"raiz",piece:"osmia",meaning:"olfato, olfación"} ]},
+      { term:"Pleurocentesis", def:"Punción y drenaje de la cavidad pleural.", parts:[
+        {tag:"raiz",piece:"pleuro-",meaning:"pleura, costado"},
+        {tag:"sufijo",piece:"-centesis",meaning:"punción"} ]},
+      { term:"Pleurodinia", def:"Dolor pleural.", parts:[
+        {tag:"raiz",piece:"pleuro-",meaning:"pleura, costado"},
+        {tag:"sufijo",piece:"-odinia",meaning:"dolor"} ]},
+      { term:"Rinorrea", def:"Secreción abundante de líquido seroso por la nariz.", parts:[
+        {tag:"raiz",piece:"rino-",meaning:"nariz"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Rinorragia", def:"Hemorragia nasal.", parts:[
+        {tag:"raiz",piece:"rino-",meaning:"nariz"},
+        {tag:"sufijo",piece:"-rragia",meaning:"derrame, hemorragia"} ]},
+      { term:"Sinusitis", def:"Inflamación de la membrana mucosa de un seno paranasal.", parts:[
+        {tag:"raiz",piece:"sinus-",meaning:"seno paranasal"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Traqueotomía", def:"Incisión en la tráquea.", parts:[
+        {tag:"raiz",piece:"traqueo-",meaning:"tráquea"},
+        {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
+      { term:"Tonsilitis", def:"Inflamación de la amígdala.", parts:[
+        {tag:"raiz",piece:"tonsilo-",meaning:"amígdala"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+    ]
+  },
+  circulatorio: {
+    label: "Sistema Circulatorio",
+    cards: [
+      { term:"Adenomegalia", def:"Hipertrofia de una glándula o ganglio.", parts:[
+        {tag:"raiz",piece:"adeno-",meaning:"glándula o ganglio"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Adenitis", def:"Inflamación aguda o crónica de los ganglios linfáticos.", parts:[
+        {tag:"raiz",piece:"adeno-",meaning:"glándula o ganglio"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Angiografía", def:"Examen radiológico de los vasos sanguíneos tras inyectar una sustancia radiopaca.", parts:[
+        {tag:"raiz",piece:"angio-",meaning:"vaso o conducto"},
+        {tag:"sufijo",piece:"-grafía",meaning:"registro, examen radiológico"} ]},
+      { term:"Arteriosclerosis", def:"Engrosamiento y pérdida de elasticidad de las paredes arteriales.", parts:[
+        {tag:"raiz",piece:"arterio-",meaning:"arteria"},
+        {tag:"sufijo",piece:"-sclerosis",meaning:"endurecimiento"} ]},
+      { term:"Cardiomegalia", def:"Aumento del tamaño del corazón.", parts:[
+        {tag:"raiz",piece:"cardio-",meaning:"corazón"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Precordialgia", def:"Dolor en la superficie anterior del corazón.", parts:[
+        {tag:"prefijo",piece:"pre-",meaning:"antes, delante"},
+        {tag:"raiz",piece:"cordi-",meaning:"corazón"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Eritrocitosis", def:"Aumento del número total de eritrocitos.", parts:[
+        {tag:"raiz",piece:"eritro-",meaning:"rojo"},
+        {tag:"raiz",piece:"cito-",meaning:"célula"},
+        {tag:"sufijo",piece:"-osis",meaning:"aumento en número"} ]},
+      { term:"Eritrocitopenia", def:"Disminución del número de eritrocitos en sangre.", parts:[
+        {tag:"raiz",piece:"eritro-",meaning:"rojo"},
+        {tag:"raiz",piece:"cito-",meaning:"célula"},
+        {tag:"sufijo",piece:"-penia",meaning:"deficiencia"} ]},
+      { term:"Esplenectomía", def:"Extirpación quirúrgica del bazo.", parts:[
+        {tag:"raiz",piece:"espleno-",meaning:"bazo"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Esplenorragia", def:"Hemorragia por rotura del bazo.", parts:[
+        {tag:"raiz",piece:"espleno-",meaning:"bazo"},
+        {tag:"sufijo",piece:"-rragia",meaning:"derrame, hemorragia"} ]},
+      { term:"Flebitis", def:"Inflamación de una vena.", parts:[
+        {tag:"raiz",piece:"flebo-",meaning:"vena"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Flebectasia", def:"Dilatación de una vena.", parts:[
+        {tag:"raiz",piece:"flebo-",meaning:"vena"},
+        {tag:"sufijo",piece:"-ectasia",meaning:"dilatación"} ]},
+      { term:"Hematuria", def:"Presencia de sangre (hematíes) en la orina.", parts:[
+        {tag:"raiz",piece:"hemato-",meaning:"sangre"},
+        {tag:"sufijo",piece:"-uria",meaning:"orina"} ]},
+      { term:"Leucocitosis", def:"Aumento anormal de la cantidad de leucocitos en la sangre.", parts:[
+        {tag:"raiz",piece:"leuco-",meaning:"blanco"},
+        {tag:"raiz",piece:"cito-",meaning:"célula"},
+        {tag:"sufijo",piece:"-osis",meaning:"aumento en número"} ]},
+      { term:"Leucocitopenia", def:"Disminución anormal en el número de leucocitos en la sangre.", parts:[
+        {tag:"raiz",piece:"leuco-",meaning:"blanco"},
+        {tag:"raiz",piece:"cito-",meaning:"célula"},
+        {tag:"sufijo",piece:"-penia",meaning:"deficiencia"} ]},
+      { term:"Linfadenomegalia", def:"Agrandamiento o hipertrofia de los ganglios linfáticos.", parts:[
+        {tag:"raiz",piece:"linfo-",meaning:"linfa"},
+        {tag:"raiz",piece:"adeno-",meaning:"glándula o ganglio"},
+        {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
+      { term:"Trombolisis", def:"Disolución de un coágulo.", parts:[
+        {tag:"raiz",piece:"trombo-",meaning:"coágulo"},
+        {tag:"sufijo",piece:"-lisis",meaning:"desintegración"} ]},
+      { term:"Tromboarteritis", def:"Inflamación de una arteria causada por un trombo intravascular.", parts:[
+        {tag:"raiz",piece:"trombo-",meaning:"coágulo"},
+        {tag:"raiz",piece:"arterio-",meaning:"arteria"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Trombocitopenia", def:"Disminución del número de plaquetas en sangre.", parts:[
+        {tag:"raiz",piece:"tromboc-",meaning:"plaqueta"},
+        {tag:"sufijo",piece:"-penia",meaning:"deficiencia"} ]},
+      { term:"Ventriculografía", def:"Exploración radiológica de los ventrículos cerebrales.", parts:[
+        {tag:"raiz",piece:"ventrículo-",meaning:"pequeña cavidad"},
+        {tag:"sufijo",piece:"-grafía",meaning:"registro, examen radiológico"} ]},
+    ]
+  },
+  digestivo: {
+    label: "Aparato Digestivo",
+    cards: [
+      { term:"Tiflitis", def:"Inflamación del ciego.", parts:[
+        {tag:"raiz",piece:"tiflo-",meaning:"ciego"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Celialgia", def:"Dolor abdominal.", parts:[
+        {tag:"raiz",piece:"celi-",meaning:"vientre, abdomen"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Colostomía", def:"Formación quirúrgica de una abertura permanente en el colon.", parts:[
+        {tag:"raiz",piece:"colo-",meaning:"colon"},
+        {tag:"sufijo",piece:"-stomía",meaning:"creación de una abertura artificial"} ]},
+      { term:"Colangiectasia", def:"Dilatación de los conductos biliares.", parts:[
+        {tag:"raiz",piece:"colangio-",meaning:"conductos biliares"},
+        {tag:"sufijo",piece:"-ectasia",meaning:"dilatación"} ]},
+      { term:"Colecistectomía", def:"Resección quirúrgica de la vesícula biliar.", parts:[
+        {tag:"raiz",piece:"colecisto-",meaning:"vesícula biliar"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Periodontitis", def:"Inflamación alrededor de la raíz dental.", parts:[
+        {tag:"prefijo",piece:"peri-",meaning:"alrededor"},
+        {tag:"raiz",piece:"odonto-",meaning:"diente"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Duodenorrafia", def:"Sutura de la pared del duodeno.", parts:[
+        {tag:"raiz",piece:"duodeno-",meaning:"duodeno"},
+        {tag:"sufijo",piece:"-rrafia",meaning:"sutura"} ]},
+      { term:"Enterocele", def:"Cualquier hernia del intestino.", parts:[
+        {tag:"raiz",piece:"entero-",meaning:"intestino"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
+      { term:"Esofagoscopía", def:"Examen del interior del esófago con un esofagoscopio.", parts:[
+        {tag:"raiz",piece:"esofago-",meaning:"esófago"},
+        {tag:"sufijo",piece:"-scopía",meaning:"visualización, examen"} ]},
+      { term:"Disfagia", def:"Dificultad o dolor al tragar.", parts:[
+        {tag:"prefijo",piece:"dis-",meaning:"difícil"},
+        {tag:"sufijo",piece:"-fagia",meaning:"comer, tragar"} ]},
+      { term:"Coprolalia", def:"Uso involuntario de palabras obscenas.", parts:[
+        {tag:"raiz",piece:"copro-",meaning:"heces, materia fecal"},
+        {tag:"sufijo",piece:"-lalia",meaning:"hablar"} ]},
+      { term:"Disgnatia", def:"Cualquier anomalía de los maxilares superior o inferior.", parts:[
+        {tag:"prefijo",piece:"dis-",meaning:"alterado"},
+        {tag:"raiz",piece:"gnato-",meaning:"mandíbula, maxilar"},
+        {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
+      { term:"Ageusia", def:"Abolición o disminución del sentido del gusto.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"geusia",meaning:"gusto"} ]},
+      { term:"Gingivorragia", def:"Hemorragia de las encías.", parts:[
+        {tag:"raiz",piece:"gingivo-",meaning:"encía"},
+        {tag:"sufijo",piece:"-rragia",meaning:"derrame, hemorragia"} ]},
+      { term:"Gastroptosis", def:"Desplazamiento hacia abajo del estómago.", parts:[
+        {tag:"raiz",piece:"gastro-",meaning:"estómago"},
+        {tag:"sufijo",piece:"-ptosis",meaning:"desplazamiento hacia abajo"} ]},
+      { term:"Macroglosia", def:"Hipertrofia o aumento del volumen de la lengua.", parts:[
+        {tag:"prefijo",piece:"macro-",meaning:"grande"},
+        {tag:"raiz",piece:"glosia",meaning:"lengua"} ]},
+      { term:"Hepatonecrosis", def:"Muerte del tejido hepático.", parts:[
+        {tag:"raiz",piece:"hepato-",meaning:"hígado"},
+        {tag:"sufijo",piece:"-necrosis",meaning:"muerte de tejido"} ]},
+      { term:"Onfalocele", def:"Hernia congénita del ombligo.", parts:[
+        {tag:"raiz",piece:"onfalo-",meaning:"ombligo"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
+      { term:"Anorexia", def:"Pérdida del apetito.", parts:[
+        {tag:"prefijo",piece:"an-",meaning:"sin"},
+        {tag:"raiz",piece:"orexia",meaning:"apetito"} ]},
+      { term:"Sialorrea", def:"Flujo excesivo de saliva.", parts:[
+        {tag:"raiz",piece:"sialo-",meaning:"saliva, glándulas salivales"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+    ]
+  },
+  urinario: {
+    label: "Aparato Urinario",
+    cards: [
+      { term:"Cistitis", def:"Inflamación de la vejiga.", parts:[
+        {tag:"raiz",piece:"cisto-",meaning:"vejiga"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Cistocele", def:"Hernia vesical; la vejiga se desplaza hacia abajo y adelante.", parts:[
+        {tag:"raiz",piece:"cisto-",meaning:"vejiga"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
+      { term:"Nefrolitiasis", def:"Presencia de cálculos en el riñón.", parts:[
+        {tag:"raiz",piece:"nefro-",meaning:"riñón"},
+        {tag:"sufijo",piece:"-litiasis",meaning:"presencia de cálculos"} ]},
+      { term:"Pielectasia", def:"Dilatación de la pelvis renal.", parts:[
+        {tag:"raiz",piece:"pielo-",meaning:"pelvis renal"},
+        {tag:"sufijo",piece:"-ectasia",meaning:"dilatación"} ]},
+      { term:"Pieloplastia", def:"Cirugía plástica de la pelvis renal.", parts:[
+        {tag:"raiz",piece:"pielo-",meaning:"pelvis renal"},
+        {tag:"sufijo",piece:"-plastia",meaning:"cirugía plástica"} ]},
+      { term:"Uremia", def:"Intoxicación por retención en sangre de desechos que normalmente se eliminan por orina.", parts:[
+        {tag:"raiz",piece:"ur-",meaning:"orina"},
+        {tag:"sufijo",piece:"-emia",meaning:"sangre"} ]},
+      { term:"Ureterectasia", def:"Distensión de un uréter.", parts:[
+        {tag:"raiz",piece:"uretero-",meaning:"uréter"},
+        {tag:"sufijo",piece:"-ectasia",meaning:"dilatación"} ]},
+      { term:"Uretralgia", def:"Dolor en la uretra.", parts:[
+        {tag:"raiz",piece:"uretro-",meaning:"uretra"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Uretroplastia", def:"Cirugía plástica de una herida o defecto en la uretra.", parts:[
+        {tag:"raiz",piece:"uretro-",meaning:"uretra"},
+        {tag:"sufijo",piece:"-plastia",meaning:"cirugía plástica"} ]},
+    ]
+  },
+  reproductorM: {
+    label: "Reproductor Masculino",
+    cards: [
+      { term:"Andropausia", def:"Cambios en el hombre (cerca de los 50 años) por la disminución de andrógenos.", parts:[
+        {tag:"raiz",piece:"andro-",meaning:"varón, hombre"},
+        {tag:"sufijo",piece:"-pausia",meaning:"cesación"} ]},
+      { term:"Balanoplastia", def:"Operación reconstructora del glande del pene.", parts:[
+        {tag:"raiz",piece:"balano-",meaning:"glande"},
+        {tag:"sufijo",piece:"-plastia",meaning:"cirugía plástica"} ]},
+      { term:"Balanopostitis", def:"Inflamación simultánea del glande y el prepucio.", parts:[
+        {tag:"raiz",piece:"balano-",meaning:"glande"},
+        {tag:"raiz",piece:"posto-",meaning:"prepucio"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Falectomía", def:"Amputación del pene.", parts:[
+        {tag:"raiz",piece:"falo-",meaning:"pene"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Orquiectomía", def:"Extirpación quirúrgica de uno o ambos testículos.", parts:[
+        {tag:"raiz",piece:"orquio-",meaning:"testículos"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Orquiopexia", def:"Fijación de un testículo al escroto cuando es ectópico.", parts:[
+        {tag:"raiz",piece:"orquio-",meaning:"testículos"},
+        {tag:"sufijo",piece:"-pexia",meaning:"fijación"} ]},
+      { term:"Osqueocele", def:"Hernia escrotal.", parts:[
+        {tag:"raiz",piece:"osqueo-",meaning:"escroto"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
+      { term:"Prostatismo", def:"Afección causada por la hipertrofia de la próstata que obstruye la uretra.", parts:[
+        {tag:"raiz",piece:"prostato-",meaning:"próstata"},
+        {tag:"sufijo",piece:"-ismo",meaning:"condición"} ]},
+      { term:"Prostatectomía", def:"Extirpación quirúrgica de la próstata.", parts:[
+        {tag:"raiz",piece:"prostato-",meaning:"próstata"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Postectomía", def:"Extirpación quirúrgica del prepucio (circuncisión).", parts:[
+        {tag:"raiz",piece:"posto-",meaning:"prepucio"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Postitis", def:"Inflamación del prepucio.", parts:[
+        {tag:"raiz",piece:"posto-",meaning:"prepucio"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Seminuria", def:"Presencia de líquido seminal en la orina.", parts:[
+        {tag:"raiz",piece:"semin-",meaning:"semen"},
+        {tag:"sufijo",piece:"-uria",meaning:"orina"} ]},
+      { term:"Espermatorrea", def:"Derrame involuntario y anómalo de semen, sin orgasmo.", parts:[
+        {tag:"raiz",piece:"espermato-",meaning:"espermatozoides"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Vasectomía", def:"Extirpación del conducto deferente; forma de esterilización masculina.", parts:[
+        {tag:"raiz",piece:"vaso-",meaning:"conducto deferente"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+    ]
+  },
+  reproductorF: {
+    label: "Reproductor Femenino",
+    cards: [
+      { term:"Cervicitis", def:"Inflamación del cuello uterino.", parts:[
+        {tag:"raiz",piece:"cervico-",meaning:"cuello uterino"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Cervicectomía", def:"Extirpación quirúrgica del cuello uterino.", parts:[
+        {tag:"raiz",piece:"cervico-",meaning:"cuello uterino"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Colpocistocele", def:"Prolapso de la vejiga dentro de la vagina.", parts:[
+        {tag:"raiz",piece:"colpo-",meaning:"vagina"},
+        {tag:"raiz",piece:"cisto-",meaning:"vejiga"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
+      { term:"Colpomicosis", def:"Presencia o formación de hongos en la vagina.", parts:[
+        {tag:"raiz",piece:"colpo-",meaning:"vagina"},
+        {tag:"sufijo",piece:"-micosis",meaning:"afección por hongos"} ]},
+      { term:"Colporrexis", def:"Desgarro total o parcial de una porción de la pared vaginal.", parts:[
+        {tag:"raiz",piece:"colpo-",meaning:"vagina"},
+        {tag:"sufijo",piece:"-rrexis",meaning:"ruptura"} ]},
+      { term:"Vaginitis", def:"Inflamación de la vagina.", parts:[
+        {tag:"raiz",piece:"vagino-",meaning:"vagina"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Galactorrea", def:"Derrame abundante de leche por las glándulas mamarias.", parts:[
+        {tag:"raiz",piece:"galacto-",meaning:"leche"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Ginecomastía", def:"Desarrollo exagerado de las mamas masculinas.", parts:[
+        {tag:"raiz",piece:"gineco-",meaning:"mujer"},
+        {tag:"sufijo",piece:"-mastía",meaning:"mama"} ]},
+      { term:"Perineorrafia", def:"Sutura del perineo en caso de desgarro, especialmente tras el parto.", parts:[
+        {tag:"raiz",piece:"perineo-",meaning:"perineo"},
+        {tag:"sufijo",piece:"-rrafia",meaning:"sutura"} ]},
+      { term:"Perineostomía", def:"Abertura de la uretra en el perineo para permitir la micción.", parts:[
+        {tag:"raiz",piece:"perineo-",meaning:"perineo"},
+        {tag:"sufijo",piece:"-stomía",meaning:"creación de una abertura artificial"} ]},
+      { term:"Salpingitis", def:"Inflamación de las trompas de Falopio.", parts:[
+        {tag:"raiz",piece:"salpingo-",meaning:"trompa de Falopio"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Salpingoperitonitis", def:"Inflamación de una trompa de Falopio y del peritoneo adyacente.", parts:[
+        {tag:"raiz",piece:"salpingo-",meaning:"trompa de Falopio"},
+        {tag:"raiz",piece:"peritoneo-",meaning:"peritoneo"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+    ]
+  },
+  embarazoParto: {
+    label: "Embarazo y Parto",
+    cards: [
+      { term:"Amniocentesis", def:"Extracción de líquido amniótico mediante punción de la pared abdominal.", parts:[
+        {tag:"raiz",piece:"amnio-",meaning:"membrana fetal"},
+        {tag:"sufijo",piece:"-centesis",meaning:"punción"} ]},
+      { term:"Amniorrea", def:"Derrame o salida prematura del líquido amniótico.", parts:[
+        {tag:"raiz",piece:"amnio-",meaning:"membrana fetal"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Amniotomía", def:"Rotura quirúrgica de las membranas fetales para inducir el parto.", parts:[
+        {tag:"raiz",piece:"amnio-",meaning:"membrana fetal"},
+        {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
+      { term:"Gestosis", def:"Conjunto de alteraciones que aparecen en ciertas mujeres durante el embarazo.", parts:[
+        {tag:"raiz",piece:"gest-",meaning:"embarazo"},
+        {tag:"sufijo",piece:"-osis",meaning:"condición"} ]},
+      { term:"Hebefrenia", def:"Forma de esquizofrenia en la que el paciente adopta una actitud risueña e infantil.", parts:[
+        {tag:"raiz",piece:"hebe-",meaning:"joven, juventud"},
+        {tag:"sufijo",piece:"-frenia",meaning:"mente"} ]},
+      { term:"Oviducto", def:"Conducto que transporta el óvulo desde el ovario hacia el exterior.", parts:[
+        {tag:"raiz",piece:"ovi-",meaning:"óvulo"},
+        {tag:"sufijo",piece:"-ducto",meaning:"conducto"} ]},
+      { term:"Ovogénesis", def:"Origen y desarrollo del óvulo.", parts:[
+        {tag:"raiz",piece:"ovo-",meaning:"óvulo"},
+        {tag:"sufijo",piece:"-génesis",meaning:"origen, reproducción"} ]},
+      { term:"Pediatría", def:"Rama de la medicina que trata el estudio y tratamiento de las enfermedades de los niños.", parts:[
+        {tag:"raiz",piece:"pedo-",meaning:"niño"},
+        {tag:"sufijo",piece:"-iatría",meaning:"tratamiento médico"} ]},
+      { term:"Puericultura", def:"Cuidados que se deben brindar al niño.", parts:[
+        {tag:"raiz",piece:"pueri-",meaning:"niño"},
+        {tag:"sufijo",piece:"-cultura",meaning:"cuidado, crianza"} ]},
+      { term:"Tocología", def:"Suma de conocimientos relativos al parto.", parts:[
+        {tag:"raiz",piece:"toco-",meaning:"parto"},
+        {tag:"sufijo",piece:"-logía",meaning:"estudio"} ]},
+      { term:"Distocia", def:"Parto difícil, por causas fetales o maternas.", parts:[
+        {tag:"prefijo",piece:"dis-",meaning:"difícil"},
+        {tag:"raiz",piece:"-tocia",meaning:"parto"} ]},
+      { term:"Eutocia", def:"Parto normal.", parts:[
+        {tag:"prefijo",piece:"eu-",meaning:"bueno"},
+        {tag:"raiz",piece:"-tocia",meaning:"parto"} ]},
+    ]
+  },
+  sentidos: {
+    label: "Órganos de los Sentidos",
+    cards: [
+      { term:"Hipoacusia", def:"Disminución de la sensibilidad auditiva.", parts:[
+        {tag:"prefijo",piece:"hipo-",meaning:"debajo, insuficiencia"},
+        {tag:"raiz",piece:"-acusia",meaning:"audición"} ]},
+      { term:"Otalgia", def:"Dolor de oído.", parts:[
+        {tag:"raiz",piece:"oto-",meaning:"oído"},
+        {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
+      { term:"Otitis", def:"Inflamación del oído.", parts:[
+        {tag:"raiz",piece:"oto-",meaning:"oído"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Otopiorrea", def:"Supuración del oído medio a través de la membrana timpánica perforada.", parts:[
+        {tag:"raiz",piece:"oto-",meaning:"oído"},
+        {tag:"raiz",piece:"pio-",meaning:"pus"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Miringectomía", def:"Extirpación quirúrgica de la membrana timpánica.", parts:[
+        {tag:"raiz",piece:"miringo-",meaning:"membrana timpánica"},
+        {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
+      { term:"Blefaroplastia", def:"Cirugía plástica realizada en los párpados.", parts:[
+        {tag:"raiz",piece:"blefaro-",meaning:"párpado"},
+        {tag:"sufijo",piece:"-plastia",meaning:"cirugía plástica"} ]},
+      { term:"Conjuntivitis", def:"Inflamación de la conjuntiva.", parts:[
+        {tag:"raiz",piece:"conjuntivo-",meaning:"conjuntiva"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Corectopía", def:"Posición anormal de la pupila.", parts:[
+        {tag:"raiz",piece:"core-",meaning:"pupila"},
+        {tag:"sufijo",piece:"-ectopía",meaning:"posición anormal"} ]},
+      { term:"Dacriorrea", def:"Flujo excesivo de lágrimas.", parts:[
+        {tag:"raiz",piece:"dacrio-",meaning:"lágrimas"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Escleromalacia", def:"Reblandecimiento de la esclerótica, propio de la fiebre reumática.", parts:[
+        {tag:"raiz",piece:"esclero-",meaning:"esclerótica, duro"},
+        {tag:"sufijo",piece:"-malacia",meaning:"reblandecimiento"} ]},
+      { term:"Facocele", def:"Hernia del cristalino.", parts:[
+        {tag:"raiz",piece:"faco-",meaning:"cristalino"},
+        {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
+      { term:"Iridoplejía", def:"Parálisis del iris.", parts:[
+        {tag:"raiz",piece:"irido-",meaning:"iris"},
+        {tag:"sufijo",piece:"-plejía",meaning:"parálisis"} ]},
+      { term:"Oftalmodinia", def:"Dolor en el globo ocular.", parts:[
+        {tag:"raiz",piece:"oftalmo-",meaning:"ojo, vista"},
+        {tag:"sufijo",piece:"-odinia",meaning:"dolor"} ]},
+      { term:"Queratitis", def:"Inflamación de la córnea.", parts:[
+        {tag:"raiz",piece:"querato-",meaning:"córnea"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Dermatitis", def:"Inflamación de la piel.", parts:[
+        {tag:"raiz",piece:"dermato-",meaning:"piel"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Mixadenitis", def:"Inflamación de una glándula mucosa.", parts:[
+        {tag:"raiz",piece:"mixo-",meaning:"moco"},
+        {tag:"raiz",piece:"adeno-",meaning:"glándula"},
+        {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
+      { term:"Mixorrea", def:"Flujo mucoso.", parts:[
+        {tag:"raiz",piece:"mixo-",meaning:"moco"},
+        {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
+      { term:"Tricofagia", def:"Hábito morboso de mascar el pelo o cabello.", parts:[
+        {tag:"raiz",piece:"trico-",meaning:"pelo"},
+        {tag:"sufijo",piece:"-fagia",meaning:"comer, tragar"} ]},
+      { term:"Hipertricosis", def:"Crecimiento de vello superior al normal en una zona concreta.", parts:[
+        {tag:"prefijo",piece:"hiper-",meaning:"exceso"},
+        {tag:"raiz",piece:"trico-",meaning:"pelo"},
+        {tag:"sufijo",piece:"-osis",meaning:"condición"} ]},
+      { term:"Onicofagia", def:"Hábito compulsivo de morderse las uñas.", parts:[
+        {tag:"raiz",piece:"onico-",meaning:"uña"},
+        {tag:"sufijo",piece:"-fagia",meaning:"comer, tragar"} ]},
+    ]
+  },
+  infecciosas: {
+    label: "Enfermedades Infecciosas",
+    cards: [
+      { term:"Demografía", def:"Estudio del tamaño, distribución y características de la población humana.", parts:[
+        {tag:"raiz",piece:"demo-",meaning:"pueblo"},
+        {tag:"sufijo",piece:"-grafía",meaning:"descripción"} ]},
+      { term:"Demofobia", def:"Temor morboso a permanecer entre multitudes.", parts:[
+        {tag:"raiz",piece:"demo-",meaning:"pueblo"},
+        {tag:"sufijo",piece:"-fobia",meaning:"temor patológico"} ]},
+      { term:"Etiología", def:"Estudio de las causas de las enfermedades.", parts:[
+        {tag:"raiz",piece:"etio-",meaning:"causa"},
+        {tag:"sufijo",piece:"-logía",meaning:"estudio"} ]},
+      { term:"Profilaxia", def:"Tratamiento preventivo.", parts:[
+        {tag:"prefijo",piece:"pro-",meaning:"antes"},
+        {tag:"raiz",piece:"filaxia",meaning:"protección"} ]},
+      { term:"Anafilaxia", def:"Reacción de hipersensibilidad grave e inmediata causada por un antígeno.", parts:[
+        {tag:"prefijo",piece:"an-",meaning:"privación"},
+        {tag:"raiz",piece:"filaxia",meaning:"protección"} ]},
+      { term:"Patogenia", def:"Estudio de las causas por las cuales se producen las enfermedades.", parts:[
+        {tag:"raiz",piece:"pato-",meaning:"enfermedad"},
+        {tag:"sufijo",piece:"-genia",meaning:"origen"} ]},
+      { term:"Semiología", def:"Estudio de los síntomas de una enfermedad, sus causas y la información que aportan.", parts:[
+        {tag:"raiz",piece:"semio-",meaning:"signo, síntoma"},
+        {tag:"sufijo",piece:"-logía",meaning:"estudio"} ]},
+      { term:"Antiséptico", def:"Sustancia que destruye los microorganismos e impide su crecimiento.", parts:[
+        {tag:"prefijo",piece:"anti-",meaning:"contra"},
+        {tag:"raiz",piece:"séptico",meaning:"sepsis, putrefacción"} ]},
+      { term:"Asepsia", def:"Ausencia de microorganismos causantes de una enfermedad.", parts:[
+        {tag:"prefijo",piece:"a-",meaning:"sin"},
+        {tag:"raiz",piece:"sepsis",meaning:"putrefacción"} ]},
+      { term:"Septicemia", def:"Presencia de gérmenes patógenos y sus toxinas en la sangre circulante.", parts:[
+        {tag:"raiz",piece:"sept-",meaning:"putrefacción"},
+        {tag:"sufijo",piece:"-emia",meaning:"sangre"} ]},
+      { term:"Toxicosis", def:"Estado morboso debido a un veneno.", parts:[
+        {tag:"raiz",piece:"toxi-",meaning:"veneno, intoxicación"},
+        {tag:"sufijo",piece:"-osis",meaning:"condición"} ]},
+      { term:"Zoonosis", def:"Enfermedad de animales que se puede transmitir al hombre.", parts:[
+        {tag:"raiz",piece:"zoo-",meaning:"animal"},
+        {tag:"sufijo",piece:"-nosis",meaning:"enfermedad"} ]},
+    ]
+  },
+  tumores: {
+    label: "Tumores",
+    cards: [
+      { term:"Osteoma", def:"Tumor benigno del tejido óseo.", parts:[
+        {tag:"raiz",piece:"osteo-",meaning:"hueso"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Fibroma", def:"Tumor benigno de tejido fibroso.", parts:[
+        {tag:"raiz",piece:"fibro-",meaning:"tejido fibroso"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Hemangioma", def:"Tumor benigno compuesto por vasos sanguíneos dilatados.", parts:[
+        {tag:"raiz",piece:"hem-",meaning:"sangre"},
+        {tag:"raiz",piece:"angio-",meaning:"vaso"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Adenocarcinoma", def:"Tumor maligno de origen glandular.", parts:[
+        {tag:"raiz",piece:"adeno-",meaning:"glándula"},
+        {tag:"raiz",piece:"carcino-",meaning:"cáncer"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Osteosarcoma", def:"Tumor maligno del tejido óseo.", parts:[
+        {tag:"raiz",piece:"osteo-",meaning:"hueso"},
+        {tag:"raiz",piece:"sarco-",meaning:"tejido conectivo, carne"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Glioma", def:"Tumor maligno formado por células del tejido cerebral.", parts:[
+        {tag:"raiz",piece:"glio-",meaning:"tejido cerebral (neuroglia)"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+      { term:"Mieloma", def:"Tumor maligno formado por células de la médula ósea.", parts:[
+        {tag:"raiz",piece:"mielo-",meaning:"médula ósea"},
+        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
+    ]
+  }
+};
+
+const ICONS = {
+  endocrinologia: '<circle cx="12" cy="13" r="6"/><path d="M9 7c1-3 5-3 6 0"/>',
+  nervioso: '<path d="M8 4.5c-2.8 0-3.8 2.6-2 4.3-2 1-2 3.7 0 4.7-1 1.8.8 3.5 2.6 3.5h6.8c1.8 0 3.6-1.7 2.6-3.5 2-1 2-3.7 0-4.7 1.8-1.7.8-4.3-2-4.3-1-1.7-3.7-1.7-4.7 0-1-.8-2.2-.8-3.3 0z"/>',
+  sufijosprefijos: '<path d="M4 7h16M4 12h11M4 17h14"/>',
+  locomotor: '<circle cx="6.5" cy="14.5" r="2.5"/><circle cx="17.5" cy="9.5" r="2.5"/><path d="M8.3 12.7l7.4-4.4"/>',
+  respiratorio: '<path d="M12 3v7"/><path d="M9 10c-3.2 0-5.2 3-5 6.5.1 2.3 1.6 3.3 2.7 2.4l2.3-4.4"/><path d="M15 10c3.2 0 5.2 3 5 6.5-.1 2.3-1.6 3.3-2.7 2.4l-2.3-4.4"/>',
+  circulatorio: '<path d="M12 20s-7-4.5-7-10a4 4 0 018-1 4 4 0 018 1c0 5.5-7 10-7 10z"/>',
+  digestivo: '<path d="M8 3.5c0 3.8-3 5-3 9a5.2 5.2 0 0010.4 0c0-1.8-.9-2.9-1-4.6 1.9.9 2.9 2.6 2.9 4.6a7.3 7.3 0 01-14.6 0c0-5 3.3-6 3.3-9"/>',
+  urinario: '<path d="M9.3 4.3c-3 2-4 5.3-2 8.2-2 2.2-2 6.3 1 8.2 2.1 1.2 5.2 1 6.3-1 3-2 3-6.3 1-8.2 2-3.1 1-6.3-2-8.2"/>',
+  reproductorM: '<circle cx="9.5" cy="14.5" r="5.5"/><path d="M13.4 10.6L19 5M19 5h-4.5M19 5v4.5"/>',
+  reproductorF: '<circle cx="12" cy="8.5" r="5.5"/><path d="M12 14v6.5M8.8 18h6.4"/>',
+  embarazoParto: '<circle cx="12" cy="14" r="7"/><circle cx="12" cy="12" r="1.8"/>',
+  sentidos: '<path d="M2.5 12s4-6 9.5-6 9.5 6 9.5 6-4 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/>',
+  infecciosas: '<circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3M6.5 6.5l1.8 1.8M15.7 15.7l1.8 1.8M6.5 17.5l1.8-1.8M15.7 8.3l1.8-1.8"/>',
+  tumores: '<path d="M8.2 5.3c-3 1-5 4.2-4 7.9 1 3.1 4.1 5.9 8 5.7 3.9-.3 6.1-3.5 5.8-7.4-.3-3.9-3.5-6.2-7.4-5.9-.9.1-1.7.4-2.4-.3z"/>'
+};
+
+let currentDeck = "endocrinologia";
+let order = [];
+let index = 0;
+let flipped = false;
+
+const deckSwitch = document.getElementById('deckSwitch');
+const card = document.getElementById('card');
+const termFront = document.getElementById('termFront');
+const termBack = document.getElementById('termBack');
+const fragmentsEl = document.getElementById('fragments');
+const definitionEl = document.getElementById('definition');
+const counterEl = document.getElementById('counter');
+const progressEl = document.getElementById('progress');
+
+function buildDeckSwitch(){
+  deckSwitch.innerHTML = '';
+  const sidebar = document.getElementById('sidebar');
+  // keep the title, remove old buttons
+  sidebar.querySelectorAll('.sidebar-btn').forEach(b => b.remove());
+
+  Object.keys(DECKS).forEach(key=>{
+    const icon = ICONS[key] || '';
+    const count = DECKS[key].cards.length;
+
+    // ── chip (móvil) ──
+    const btn = document.createElement('button');
+    btn.innerHTML = `<svg viewBox="0 0 24 24">${icon}</svg><span>${DECKS[key].label}</span>`;
+    btn.className = key === currentDeck ? 'active' : '';
+    btn.onclick = () => { currentDeck = key; resetDeck(); };
+    deckSwitch.appendChild(btn);
+
+    // ── sidebar row (escritorio) ──
+    const sb = document.createElement('button');
+    sb.className = 'sidebar-btn' + (key === currentDeck ? ' active' : '');
+    sb.innerHTML = `<svg viewBox="0 0 24 24">${icon}</svg><span>${DECKS[key].label}</span><span class="sidebar-count">${count}</span>`;
+    sb.onclick = () => { currentDeck = key; resetDeck(); };
+    sidebar.appendChild(sb);
+  });
+}
+
+function resetDeck(){
+  order = DECKS[currentDeck].cards.map((_,i)=>i);
+  index = 0;
+  flipped = false;
+  card.classList.remove('flipped');
+  buildDeckSwitch();
+  render();
+}
+
+function shuffle(){
+  for(let i=order.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [order[i],order[j]] = [order[j],order[i]];
+  }
+  index = 0;
+  flipped = false;
+  card.classList.remove('flipped');
+  render();
+}
+
+function render(){
+  const deck = DECKS[currentDeck].cards;
+  const c = deck[order[index]];
+
+  termFront.textContent = c.term;
+  termBack.textContent = c.term;
+  definitionEl.textContent = c.def;
+
+  fragmentsEl.innerHTML = '';
+  c.parts.forEach(p=>{
+    const div = document.createElement('div');
+    div.className = 'frag ' + p.tag;
+    div.innerHTML = `<span class="piece">${p.piece}</span><br>
+      <span class="tag">${p.tag === 'prefijo' ? 'Prefijo' : p.tag === 'sufijo' ? 'Sufijo' : 'Raíz'}</span>
+      <span class="meaning">${p.meaning}</span>`;
+    fragmentsEl.appendChild(div);
+  });
+
+  counterEl.textContent = `${index+1} / ${deck.length}`;
+
+  progressEl.innerHTML = '';
+  deck.forEach((_,i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i===index ? ' current' : i<index ? ' done' : '');
+    progressEl.appendChild(dot);
+  });
+}
+
+card.addEventListener('click', ()=>{
+  flipped = !flipped;
+  card.classList.toggle('flipped', flipped);
+});
+
+document.getElementById('nextBtn').onclick = ()=>{
+  const len = DECKS[currentDeck].cards.length;
+  index = (index+1) % len;
+  flipped = false;
+  card.classList.remove('flipped');
+  render();
+};
+document.getElementById('prevBtn').onclick = ()=>{
+  const len = DECKS[currentDeck].cards.length;
+  index = (index-1+len) % len;
+  flipped = false;
+  card.classList.remove('flipped');
+  render();
+};
+document.getElementById('shuffleBtn').onclick = shuffle;
+
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'ArrowRight') document.getElementById('nextBtn').click();
+  if(e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+  if(e.key === ' '){ e.preventDefault(); card.click(); }
+});
+
+resetDeck();
+</script>
+</body>
+</html>
