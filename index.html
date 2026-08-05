@@ -730,24 +730,24 @@ const DECKS = {
   nervioso: {
     label: "Sistema Nervioso",
     cards: [
-      { term:"Encéfalo", def:"Término médico para el cerebro.", parts:[
-        {tag:"raiz",piece:"encéfalo",meaning:"cerebro"} ]},
+      { term:"Encéfalo", def:"Conjunto de estructuras nerviosas dentro del cráneo: cerebro, cerebelo y tronco encefálico.", parts:[
+        {tag:"raiz",piece:"encéfalo",meaning:"dentro de la cabeza"} ]},
       { term:"Mielo-", def:"Raíz que indica médula (ósea o espinal).", parts:[
         {tag:"raiz",piece:"mielo-",meaning:"médula"} ]},
       { term:"Neuro-", def:"Raíz que indica nervio o sistema nervioso.", parts:[
         {tag:"raiz",piece:"neuro-",meaning:"nervio"} ]},
-      { term:"Espina bífida", def:"Malformación congénita por fusión incompleta de la columna.", parts:[
+      { term:"Espina bífida", def:"Defecto congénito del cierre del tubo neural que afecta la columna vertebral.", parts:[
         {tag:"raiz",piece:"espina",meaning:"columna vertebral"},
-        {tag:"sufijo",piece:"bífida",meaning:"dividida en dos"} ]},
+        {tag:"raiz",piece:"bífida",meaning:"dividida en dos"} ]},
       { term:"Meningo-", def:"Raíz que indica las meninges.", parts:[
         {tag:"raiz",piece:"meningo-",meaning:"meninges"} ]},
-      { term:"Meningocele", def:"Protrusión de las meninges.", parts:[
+      { term:"Meningocele", def:"Protrusión de las meninges y del líquido cefalorraquídeo a través de un defecto vertebral, sin incluir la médula espinal.", parts:[
         {tag:"raiz",piece:"meningo-",meaning:"meninges"},
         {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
-      { term:"Mielocele", def:"Protrusión de la médula espinal.", parts:[
+      { term:"Mielocele", def:"Forma de disrafismo espinal abierto en la que la médula queda expuesta a través de un defecto de la columna.", parts:[
         {tag:"raiz",piece:"mielo-",meaning:"médula"},
         {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
-      { term:"Mielomeningocele", def:"Protrusión conjunta de médula y meninges.", parts:[
+      { term:"Mielomeningocele", def:"Protrusión de las meninges y de la médula espinal a través de un defecto vertebral; es una forma grave de espina bífida.", parts:[
         {tag:"raiz",piece:"mielo-",meaning:"médula"},
         {tag:"raiz",piece:"meningo-",meaning:"meninges"},
         {tag:"sufijo",piece:"-cele",meaning:"hernia, protrusión"} ]},
@@ -757,18 +757,18 @@ const DECKS = {
       { term:"Craneotomía", def:"Apertura quirúrgica del cráneo.", parts:[
         {tag:"raiz",piece:"craneo-",meaning:"cráneo"},
         {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
-      { term:"Epilepsia", def:"Crisis por descargas eléctricas anómalas; literalmente, «agarrar desde arriba».", parts:[
+      { term:"Epilepsia", def:"Trastorno neurológico caracterizado por crisis recurrentes causadas por actividad eléctrica anormal del cerebro.", parts:[
         {tag:"prefijo",piece:"epi-",meaning:"sobre"},
-        {tag:"raiz",piece:"lepsis",meaning:"agarrar o sujetar"} ]},
-      { term:"Descerebración", def:"Pérdida de la función cerebral.", parts:[
+        {tag:"raiz",piece:"lepsis",meaning:"ataque, crisis o apoderamiento"} ]},
+      { term:"Descerebración", def:"Postura extensora anormal que puede aparecer por una lesión neurológica grave, especialmente del tronco encefálico.", parts:[
         {tag:"prefijo",piece:"des-",meaning:"cesación"},
         {tag:"raiz",piece:"cerebro",meaning:"cerebro"},
         {tag:"sufijo",piece:"-ación",meaning:"acción y efecto"} ]},
-      { term:"Decorticación", def:"Pérdida de la función de la corteza cerebral.", parts:[
+      { term:"Decorticación", def:"Postura flexora anormal asociada con una lesión cerebral grave que afecta las vías superiores del encéfalo.", parts:[
         {tag:"prefijo",piece:"de-",meaning:"cesación"},
         {tag:"raiz",piece:"cort-",meaning:"corteza"},
         {tag:"sufijo",piece:"-ción",meaning:"acción"} ]},
-      { term:"Anencefalia", def:"Ausencia congénita del encéfalo.", parts:[
+      { term:"Anencefalia", def:"Defecto congénito en el que faltan partes importantes del cerebro y del cráneo.", parts:[
         {tag:"prefijo",piece:"an-",meaning:"sin"},
         {tag:"raiz",piece:"encéfalo",meaning:"cerebro"},
         {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
@@ -787,28 +787,28 @@ const DECKS = {
       { term:"Hemiplejía", def:"Parálisis de una mitad lateral del cuerpo.", parts:[
         {tag:"prefijo",piece:"hemi-",meaning:"mitad"},
         {tag:"sufijo",piece:"-plejía",meaning:"parálisis"} ]},
-      { term:"Afasia", def:"Incapacidad de emitir palabras.", parts:[
+      { term:"Afasia", def:"Trastorno del lenguaje que dificulta comprender o producir lenguaje hablado y escrito.", parts:[
         {tag:"prefijo",piece:"a-",meaning:"sin"},
         {tag:"raiz",piece:"fas-",meaning:"palabra"},
         {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
-      { term:"Agorafobia", def:"Temor a los espacios abiertos.", parts:[
+      { term:"Agorafobia", def:"Ansiedad y miedo intenso ante situaciones de las que escapar o recibir ayuda podría resultar difícil, como multitudes, transporte o espacios abiertos.", parts:[
         {tag:"raiz",piece:"agora-",meaning:"espacios abiertos"},
         {tag:"sufijo",piece:"-fobia",meaning:"temor patológico"} ]},
-      { term:"Esquizofrenia", def:"Literalmente, mente dividida.", parts:[
+      { term:"Esquizofrenia", def:"Trastorno mental grave que puede alterar la percepción de la realidad, el pensamiento, las emociones y la conducta.", parts:[
         {tag:"raiz",piece:"esquizo-",meaning:"dividido"},
         {tag:"sufijo",piece:"-frenia",meaning:"mente"} ]},
       { term:"Agnosia", def:"Incapacidad para conocer o reconocer.", parts:[
         {tag:"prefijo",piece:"a-",meaning:"sin"},
         {tag:"raiz",piece:"gnosis",meaning:"conocimiento"} ]},
-      { term:"Dislalia", def:"Habla imperfecta.", parts:[
+      { term:"Dislalia", def:"Dificultad para producir o articular correctamente los sonidos del habla.", parts:[
         {tag:"prefijo",piece:"dis-",meaning:"alterado, difícil"},
         {tag:"raiz",piece:"lal-",meaning:"hablar"},
         {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
-      { term:"Dislexia", def:"Lectura imperfecta.", parts:[
+      { term:"Dislexia", def:"Trastorno del aprendizaje que dificulta la lectura, la decodificación de palabras y la ortografía.", parts:[
         {tag:"prefijo",piece:"dis-",meaning:"alterado, difícil"},
         {tag:"raiz",piece:"lex-",meaning:"leer"},
         {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
-      { term:"Mielitis", def:"Inflamación de la médula.", parts:[
+      { term:"Mielitis", def:"Inflamación de la médula espinal.", parts:[
         {tag:"raiz",piece:"mielo-",meaning:"médula espinal"},
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
       { term:"Polineuritis", def:"Inflamación de muchos nervios.", parts:[
@@ -821,7 +821,7 @@ const DECKS = {
       { term:"Rizotomía", def:"Corte de una raíz nerviosa.", parts:[
         {tag:"raiz",piece:"rizo-",meaning:"raíz"},
         {tag:"sufijo",piece:"-tomía",meaning:"incisión, corte"} ]},
-      { term:"Otosclerosis", def:"Endurecimiento (esclerosis) del oído.", parts:[
+      { term:"Otosclerosis", def:"Crecimiento óseo anormal en el oído medio que puede impedir la vibración normal de los huesecillos y causar pérdida auditiva.", parts:[
         {tag:"raiz",piece:"oto-",meaning:"oído"},
         {tag:"sufijo",piece:"-sclerosis",meaning:"dureza"} ]},
       { term:"Sonambulismo", def:"Estado en que, dormido, se realizan caminatas y actos motores habituales.", parts:[
@@ -836,22 +836,22 @@ const DECKS = {
       { term:"Anestesia", def:"Privación total o parcial de la sensibilidad general.", parts:[
         {tag:"prefijo",piece:"an-",meaning:"sin"},
         {tag:"raiz",piece:"estesia",meaning:"sensibilidad"} ]},
-      { term:"Poliomielitis", def:"Inflamación y degeneración de la sustancia gris de la médula espinal.", parts:[
-        {tag:"prefijo",piece:"polio-",meaning:"mucho, gris"},
+      { term:"Poliomielitis", def:"Infección viral que puede inflamar y dañar las neuronas motoras de la médula espinal y causar parálisis.", parts:[
+        {tag:"prefijo",piece:"polio-",meaning:"gris"},
         {tag:"raiz",piece:"mielo-",meaning:"médula espinal"},
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
       { term:"Meningioma", def:"Tumor intracraneal derivado de la aracnoides.", parts:[
         {tag:"raiz",piece:"mening(o)-",meaning:"meninges"},
         {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
-      { term:"Amnesia", def:"Pérdida de la memoria por lesión cerebral o choque emocional grave.", parts:[
+      { term:"Amnesia", def:"Pérdida parcial o total de la memoria.", parts:[
         {tag:"prefijo",piece:"a-",meaning:"sin"},
         {tag:"raiz",piece:"mnesia",meaning:"memoria, recordar"} ]},
       { term:"Neuralgia", def:"Dolor intenso a lo largo del recorrido de un nervio.", parts:[
         {tag:"raiz",piece:"neuro-",meaning:"nervio"},
         {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
-      { term:"Hipertimia", def:"Aumento de la emotividad o actividad excesiva.", parts:[
+      { term:"Hipertimia", def:"Aumento anormal de la tonalidad afectiva o del estado de ánimo, que puede expresarse como euforia o irritabilidad.", parts:[
         {tag:"prefijo",piece:"hiper-",meaning:"exceso"},
-        {tag:"raiz",piece:"-timia",meaning:"mente, afectividad"} ]},
+        {tag:"raiz",piece:"-timia",meaning:"estado de ánimo o afectividad"} ]},
     ]
   },
   sufijosprefijos: {
@@ -1022,7 +1022,7 @@ const DECKS = {
       { term:"Laringorrafia", def:"Sutura de la laringe.", parts:[
         {tag:"raiz",piece:"laringo-",meaning:"laringe"},
         {tag:"sufijo",piece:"-rrafia",meaning:"sutura"} ]},
-      { term:"Neumotórax", def:"Presencia de aire en la cavidad torácica, en la pleura.", parts:[
+      { term:"Neumotórax", def:"Acumulación de aire en el espacio pleural, que puede provocar el colapso parcial o total de un pulmón.", parts:[
         {tag:"raiz",piece:"neumo-",meaning:"pulmón, aire"},
         {tag:"raiz",piece:"tórax",meaning:"tórax"} ]},
       { term:"Neumopatía", def:"Término general para las enfermedades de los pulmones.", parts:[
@@ -1037,7 +1037,7 @@ const DECKS = {
       { term:"Pleurodinia", def:"Dolor pleural.", parts:[
         {tag:"raiz",piece:"pleuro-",meaning:"pleura, costado"},
         {tag:"sufijo",piece:"-odinia",meaning:"dolor"} ]},
-      { term:"Rinorrea", def:"Secreción abundante de líquido seroso por la nariz.", parts:[
+      { term:"Rinorrea", def:"Secreción o flujo de líquido por la nariz.", parts:[
         {tag:"raiz",piece:"rino-",meaning:"nariz"},
         {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
       { term:"Rinorragia", def:"Hemorragia nasal.", parts:[
@@ -1049,7 +1049,7 @@ const DECKS = {
       { term:"Traqueotomía", def:"Incisión en la tráquea.", parts:[
         {tag:"raiz",piece:"traqueo-",meaning:"tráquea"},
         {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
-      { term:"Tonsilitis", def:"Inflamación de la amígdala.", parts:[
+      { term:"Tonsilitis", def:"Inflamación de una o ambas amígdalas, generalmente las palatinas.", parts:[
         {tag:"raiz",piece:"tonsilo-",meaning:"amígdala"},
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
     ]
@@ -1060,7 +1060,7 @@ const DECKS = {
       { term:"Adenomegalia", def:"Hipertrofia de una glándula o ganglio.", parts:[
         {tag:"raiz",piece:"adeno-",meaning:"glándula o ganglio"},
         {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
-      { term:"Adenitis", def:"Inflamación aguda o crónica de los ganglios linfáticos.", parts:[
+      { term:"Adenitis", def:"Inflamación de una glándula o de un ganglio linfático.", parts:[
         {tag:"raiz",piece:"adeno-",meaning:"glándula o ganglio"},
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
       { term:"Angiografía", def:"Examen radiológico de los vasos sanguíneos tras inyectar una sustancia radiopaca.", parts:[
@@ -1072,7 +1072,7 @@ const DECKS = {
       { term:"Cardiomegalia", def:"Aumento del tamaño del corazón.", parts:[
         {tag:"raiz",piece:"cardio-",meaning:"corazón"},
         {tag:"sufijo",piece:"-megalia",meaning:"agrandamiento"} ]},
-      { term:"Precordialgia", def:"Dolor en la superficie anterior del corazón.", parts:[
+      { term:"Precordialgia", def:"Dolor localizado en la región anterior del tórax, sobre el área del corazón.", parts:[
         {tag:"prefijo",piece:"pre-",meaning:"antes, delante"},
         {tag:"raiz",piece:"cordi-",meaning:"corazón"},
         {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
@@ -1087,7 +1087,7 @@ const DECKS = {
       { term:"Esplenectomía", def:"Extirpación quirúrgica del bazo.", parts:[
         {tag:"raiz",piece:"espleno-",meaning:"bazo"},
         {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
-      { term:"Esplenorragia", def:"Hemorragia por rotura del bazo.", parts:[
+      { term:"Esplenorragia", def:"Hemorragia originada en el bazo.", parts:[
         {tag:"raiz",piece:"espleno-",meaning:"bazo"},
         {tag:"sufijo",piece:"-rragia",meaning:"derrame, hemorragia"} ]},
       { term:"Flebitis", def:"Inflamación de una vena.", parts:[
@@ -1121,8 +1121,8 @@ const DECKS = {
       { term:"Trombocitopenia", def:"Disminución del número de plaquetas en sangre.", parts:[
         {tag:"raiz",piece:"tromboc-",meaning:"plaqueta"},
         {tag:"sufijo",piece:"-penia",meaning:"deficiencia"} ]},
-      { term:"Ventriculografía", def:"Exploración radiológica de los ventrículos cerebrales.", parts:[
-        {tag:"raiz",piece:"ventrículo-",meaning:"pequeña cavidad"},
+      { term:"Ventriculografía", def:"Estudio radiológico de los ventrículos cardíacos, generalmente mediante contraste.", parts:[
+        {tag:"raiz",piece:"ventrículo-",meaning:"cavidad cardíaca"},
         {tag:"sufijo",piece:"-grafía",meaning:"registro, examen radiológico"} ]},
     ]
   },
@@ -1135,7 +1135,7 @@ const DECKS = {
       { term:"Celialgia", def:"Dolor abdominal.", parts:[
         {tag:"raiz",piece:"celi-",meaning:"vientre, abdomen"},
         {tag:"sufijo",piece:"-algia",meaning:"dolor"} ]},
-      { term:"Colostomía", def:"Formación quirúrgica de una abertura permanente en el colon.", parts:[
+      { term:"Colostomía", def:"Creación quirúrgica de una abertura del colon hacia la pared abdominal para desviar la salida de las heces.", parts:[
         {tag:"raiz",piece:"colo-",meaning:"colon"},
         {tag:"sufijo",piece:"-stomía",meaning:"creación de una abertura artificial"} ]},
       { term:"Colangiectasia", def:"Dilatación de los conductos biliares.", parts:[
@@ -1144,20 +1144,20 @@ const DECKS = {
       { term:"Colecistectomía", def:"Resección quirúrgica de la vesícula biliar.", parts:[
         {tag:"raiz",piece:"colecisto-",meaning:"vesícula biliar"},
         {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
-      { term:"Periodontitis", def:"Inflamación alrededor de la raíz dental.", parts:[
+      { term:"Periodontitis", def:"Inflamación e infección de los tejidos que sostienen los dientes.", parts:[
         {tag:"prefijo",piece:"peri-",meaning:"alrededor"},
         {tag:"raiz",piece:"odonto-",meaning:"diente"},
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
       { term:"Duodenorrafia", def:"Sutura de la pared del duodeno.", parts:[
         {tag:"raiz",piece:"duodeno-",meaning:"duodeno"},
         {tag:"sufijo",piece:"-rrafia",meaning:"sutura"} ]},
-      { term:"Enterocele", def:"Cualquier hernia del intestino.", parts:[
+      { term:"Enterocele", def:"Hernia o protrusión de una porción del intestino, generalmente del intestino delgado.", parts:[
         {tag:"raiz",piece:"entero-",meaning:"intestino"},
         {tag:"sufijo",piece:"-cele",meaning:"hernia"} ]},
       { term:"Esofagoscopía", def:"Examen del interior del esófago con un esofagoscopio.", parts:[
         {tag:"raiz",piece:"esofago-",meaning:"esófago"},
         {tag:"sufijo",piece:"-scopía",meaning:"visualización, examen"} ]},
-      { term:"Disfagia", def:"Dificultad o dolor al tragar.", parts:[
+      { term:"Disfagia", def:"Dificultad para tragar alimentos o líquidos.", parts:[
         {tag:"prefijo",piece:"dis-",meaning:"difícil"},
         {tag:"sufijo",piece:"-fagia",meaning:"comer, tragar"} ]},
       { term:"Coprolalia", def:"Uso involuntario de palabras obscenas.", parts:[
@@ -1167,7 +1167,7 @@ const DECKS = {
         {tag:"prefijo",piece:"dis-",meaning:"alterado"},
         {tag:"raiz",piece:"gnato-",meaning:"mandíbula, maxilar"},
         {tag:"sufijo",piece:"-ia",meaning:"condición"} ]},
-      { term:"Ageusia", def:"Abolición o disminución del sentido del gusto.", parts:[
+      { term:"Ageusia", def:"Pérdida completa del sentido del gusto.", parts:[
         {tag:"prefijo",piece:"a-",meaning:"sin"},
         {tag:"raiz",piece:"geusia",meaning:"gusto"} ]},
       { term:"Gingivorragia", def:"Hemorragia de las encías.", parts:[
@@ -1228,7 +1228,7 @@ const DECKS = {
   reproductorM: {
     label: "Reproductor Masculino",
     cards: [
-      { term:"Andropausia", def:"Cambios en el hombre (cerca de los 50 años) por la disminución de andrógenos.", parts:[
+      { term:"Andropausia", def:"Conjunto de cambios asociados con una disminución progresiva de andrógenos en algunos hombres, sin una edad fija de inicio.", parts:[
         {tag:"raiz",piece:"andro-",meaning:"varón, hombre"},
         {tag:"sufijo",piece:"-pausia",meaning:"cesación"} ]},
       { term:"Balanoplastia", def:"Operación reconstructora del glande del pene.", parts:[
@@ -1268,7 +1268,7 @@ const DECKS = {
       { term:"Espermatorrea", def:"Derrame involuntario y anómalo de semen, sin orgasmo.", parts:[
         {tag:"raiz",piece:"espermato-",meaning:"espermatozoides"},
         {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
-      { term:"Vasectomía", def:"Extirpación del conducto deferente; forma de esterilización masculina.", parts:[
+      { term:"Vasectomía", def:"Corte y sellado de los conductos deferentes para impedir el paso de los espermatozoides; es un método de esterilización masculina.", parts:[
         {tag:"raiz",piece:"vaso-",meaning:"conducto deferente"},
         {tag:"sufijo",piece:"-ectomía",meaning:"extirpación"} ]},
     ]
@@ -1295,10 +1295,10 @@ const DECKS = {
       { term:"Vaginitis", def:"Inflamación de la vagina.", parts:[
         {tag:"raiz",piece:"vagino-",meaning:"vagina"},
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
-      { term:"Galactorrea", def:"Derrame abundante de leche por las glándulas mamarias.", parts:[
+      { term:"Galactorrea", def:"Producción o salida de leche por las mamas fuera de la lactancia normal o en cantidad no esperada.", parts:[
         {tag:"raiz",piece:"galacto-",meaning:"leche"},
         {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
-      { term:"Ginecomastía", def:"Desarrollo exagerado de las mamas masculinas.", parts:[
+      { term:"Ginecomastia", def:"Aumento benigno del tejido glandular de las mamas en un hombre.", parts:[
         {tag:"raiz",piece:"gineco-",meaning:"mujer"},
         {tag:"sufijo",piece:"-mastía",meaning:"mama"} ]},
       { term:"Perineorrafia", def:"Sutura del perineo en caso de desgarro, especialmente tras el parto.", parts:[
@@ -1322,10 +1322,10 @@ const DECKS = {
       { term:"Amniocentesis", def:"Extracción de líquido amniótico mediante punción de la pared abdominal.", parts:[
         {tag:"raiz",piece:"amnio-",meaning:"membrana fetal"},
         {tag:"sufijo",piece:"-centesis",meaning:"punción"} ]},
-      { term:"Amniorrea", def:"Derrame o salida prematura del líquido amniótico.", parts:[
+      { term:"Amniorrea", def:"Salida o derrame de líquido amniótico; cuando ocurre antes de tiempo puede relacionarse con una ruptura prematura de membranas.", parts:[
         {tag:"raiz",piece:"amnio-",meaning:"membrana fetal"},
         {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
-      { term:"Amniotomía", def:"Rotura quirúrgica de las membranas fetales para inducir el parto.", parts:[
+      { term:"Amniotomía", def:"Rotura artificial de las membranas amnióticas, realizada como parte de la atención obstétrica cuando está indicada.", parts:[
         {tag:"raiz",piece:"amnio-",meaning:"membrana fetal"},
         {tag:"sufijo",piece:"-tomía",meaning:"incisión"} ]},
       { term:"Gestosis", def:"Conjunto de alteraciones que aparecen en ciertas mujeres durante el embarazo.", parts:[
@@ -1334,7 +1334,7 @@ const DECKS = {
       { term:"Hebefrenia", def:"Forma de esquizofrenia en la que el paciente adopta una actitud risueña e infantil.", parts:[
         {tag:"raiz",piece:"hebe-",meaning:"joven, juventud"},
         {tag:"sufijo",piece:"-frenia",meaning:"mente"} ]},
-      { term:"Oviducto", def:"Conducto que transporta el óvulo desde el ovario hacia el exterior.", parts:[
+      { term:"Oviducto", def:"Conducto que transporta el óvulo desde el ovario hacia el útero; también se llama trompa de Falopio.", parts:[
         {tag:"raiz",piece:"ovi-",meaning:"óvulo"},
         {tag:"sufijo",piece:"-ducto",meaning:"conducto"} ]},
       { term:"Ovogénesis", def:"Origen y desarrollo del óvulo.", parts:[
@@ -1388,7 +1388,7 @@ const DECKS = {
       { term:"Dacriorrea", def:"Flujo excesivo de lágrimas.", parts:[
         {tag:"raiz",piece:"dacrio-",meaning:"lágrimas"},
         {tag:"sufijo",piece:"-rrea",meaning:"flujo"} ]},
-      { term:"Escleromalacia", def:"Reblandecimiento de la esclerótica, propio de la fiebre reumática.", parts:[
+      { term:"Escleromalacia", def:"Reblandecimiento y adelgazamiento de la esclerótica del ojo.", parts:[
         {tag:"raiz",piece:"esclero-",meaning:"esclerótica, duro"},
         {tag:"sufijo",piece:"-malacia",meaning:"reblandecimiento"} ]},
       { term:"Facocele", def:"Hernia del cristalino.", parts:[
@@ -1437,31 +1437,31 @@ const DECKS = {
       { term:"Etiología", def:"Estudio de las causas de las enfermedades.", parts:[
         {tag:"raiz",piece:"etio-",meaning:"causa"},
         {tag:"sufijo",piece:"-logía",meaning:"estudio"} ]},
-      { term:"Profilaxia", def:"Tratamiento preventivo.", parts:[
+      { term:"Profilaxis", def:"Conjunto de medidas destinadas a prevenir una enfermedad o infección.", parts:[
         {tag:"prefijo",piece:"pro-",meaning:"antes"},
         {tag:"raiz",piece:"filaxia",meaning:"protección"} ]},
-      { term:"Anafilaxia", def:"Reacción de hipersensibilidad grave e inmediata causada por un antígeno.", parts:[
+      { term:"Anafilaxia", def:"Reacción alérgica grave y rápida que puede comprometer varios sistemas del organismo.", parts:[
         {tag:"prefijo",piece:"an-",meaning:"privación"},
         {tag:"raiz",piece:"filaxia",meaning:"protección"} ]},
-      { term:"Patogenia", def:"Estudio de las causas por las cuales se producen las enfermedades.", parts:[
+      { term:"Patogenia", def:"Proceso y mecanismos mediante los cuales se origina y desarrolla una enfermedad.", parts:[
         {tag:"raiz",piece:"pato-",meaning:"enfermedad"},
         {tag:"sufijo",piece:"-genia",meaning:"origen"} ]},
-      { term:"Semiología", def:"Estudio de los síntomas de una enfermedad, sus causas y la información que aportan.", parts:[
+      { term:"Semiología", def:"Estudio de los signos y síntomas de las enfermedades para reconocer e interpretar sus manifestaciones.", parts:[
         {tag:"raiz",piece:"semio-",meaning:"signo, síntoma"},
         {tag:"sufijo",piece:"-logía",meaning:"estudio"} ]},
       { term:"Antiséptico", def:"Sustancia que destruye los microorganismos e impide su crecimiento.", parts:[
         {tag:"prefijo",piece:"anti-",meaning:"contra"},
         {tag:"raiz",piece:"séptico",meaning:"sepsis, putrefacción"} ]},
-      { term:"Asepsia", def:"Ausencia de microorganismos causantes de una enfermedad.", parts:[
+      { term:"Asepsia", def:"Conjunto de medidas destinadas a evitar la contaminación por microorganismos.", parts:[
         {tag:"prefijo",piece:"a-",meaning:"sin"},
         {tag:"raiz",piece:"sepsis",meaning:"putrefacción"} ]},
-      { term:"Septicemia", def:"Presencia de gérmenes patógenos y sus toxinas en la sangre circulante.", parts:[
+      { term:"Septicemia", def:"Infección en la que microorganismos llegan y se multiplican en el torrente sanguíneo.", parts:[
         {tag:"raiz",piece:"sept-",meaning:"putrefacción"},
         {tag:"sufijo",piece:"-emia",meaning:"sangre"} ]},
       { term:"Toxicosis", def:"Estado morboso debido a un veneno.", parts:[
         {tag:"raiz",piece:"toxi-",meaning:"veneno, intoxicación"},
         {tag:"sufijo",piece:"-osis",meaning:"condición"} ]},
-      { term:"Zoonosis", def:"Enfermedad de animales que se puede transmitir al hombre.", parts:[
+      { term:"Zoonosis", def:"Enfermedad infecciosa que se transmite naturalmente entre animales vertebrados y seres humanos.", parts:[
         {tag:"raiz",piece:"zoo-",meaning:"animal"},
         {tag:"sufijo",piece:"-nosis",meaning:"enfermedad"} ]},
     ]
@@ -1479,18 +1479,16 @@ const DECKS = {
         {tag:"raiz",piece:"hem-",meaning:"sangre"},
         {tag:"raiz",piece:"angio-",meaning:"vaso"},
         {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
-      { term:"Adenocarcinoma", def:"Tumor maligno de origen glandular.", parts:[
+      { term:"Adenocarcinoma", def:"Tumor maligno originado en tejido glandular o epitelial con función secretora.", parts:[
         {tag:"raiz",piece:"adeno-",meaning:"glándula"},
-        {tag:"raiz",piece:"carcino-",meaning:"cáncer"},
-        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
-      { term:"Osteosarcoma", def:"Tumor maligno del tejido óseo.", parts:[
+        {tag:"sufijo",piece:"-carcinoma",meaning:"tumor maligno epitelial"} ]},
+      { term:"Osteosarcoma", def:"Tumor maligno que se forma en el tejido óseo y produce tejido osteoide.", parts:[
         {tag:"raiz",piece:"osteo-",meaning:"hueso"},
-        {tag:"raiz",piece:"sarco-",meaning:"tejido conectivo, carne"},
-        {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
-      { term:"Glioma", def:"Tumor maligno formado por células del tejido cerebral.", parts:[
+        {tag:"sufijo",piece:"-sarcoma",meaning:"tumor maligno del tejido conectivo"} ]},
+      { term:"Glioma", def:"Tumor originado en células gliales del sistema nervioso; su comportamiento puede ser benigno o maligno según el tipo.", parts:[
         {tag:"raiz",piece:"glio-",meaning:"tejido cerebral (neuroglia)"},
         {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
-      { term:"Mieloma", def:"Tumor maligno formado por células de la médula ósea.", parts:[
+      { term:"Mieloma", def:"Tumor maligno de células plasmáticas que se desarrolla principalmente en la médula ósea.", parts:[
         {tag:"raiz",piece:"mielo-",meaning:"médula ósea"},
         {tag:"sufijo",piece:"-oma",meaning:"tumoración"} ]},
     ]
