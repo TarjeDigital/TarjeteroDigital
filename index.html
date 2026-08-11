@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tarjetero de Etimología Médica</title>
+<title>Tarjetero de Lenguaje Clínico</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
@@ -690,6 +690,85 @@
     text-align:center;
     color:var(--muted);
   }
+  .mode-switch{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+    padding:5px;
+    margin:4px 0 14px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(255,255,255,.5);
+  }
+  .mode-btn{
+    border:0;
+    border-radius:10px;
+    padding:10px 8px;
+    background:transparent;
+    color:var(--muted);
+    font:600 12px/1.25 'Manrope',sans-serif;
+    cursor:pointer;
+  }
+  .mode-btn.active{
+    background:var(--dark);
+    color:#fff;
+    box-shadow:0 7px 18px rgba(9,44,39,.14);
+  }
+  .sidebar .mode-switch{ grid-template-columns:1fr; margin:0 0 12px; }
+  .sidebar .mode-btn{ text-align:left; padding:10px 11px; }
+  .sidebar.clinical-mode #deckSectionTitle,.sidebar.clinical-mode .sidebar-btn{ display:none; }
+  .tone-filters{
+    display:flex;
+    gap:7px;
+    overflow-x:auto;
+    padding:2px 2px 11px;
+    margin:0 0 5px;
+    scrollbar-width:none;
+  }
+  .tone-filters::-webkit-scrollbar{ display:none; }
+  .tone-filter{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 11px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,.68);
+    color:var(--ink);
+    font:600 11px 'Manrope',sans-serif;
+    cursor:pointer;
+  }
+  .tone-filter.active{ border-color:var(--dark); box-shadow:0 0 0 2px rgba(18,61,54,.1); }
+  .tone-filter-swatch{ width:11px;height:11px;border-radius:50%;background:var(--swatch);box-shadow:inset 0 0 0 1px rgba(9,44,39,.14); }
+  .front-meta{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-height:22px;
+    color:#d8e6df;
+    font:500 11px 'DM Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .front-meta:empty{ display:none; }
+  .front-meta-dot{ width:9px;height:9px;border-radius:50%;background:var(--tone);box-shadow:0 0 0 3px rgba(255,255,255,.12); }
+  .tone-panel{
+    width:100%;height:100%;min-height:210px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;
+    padding:24px;text-align:center;color:#fff;
+    background:linear-gradient(145deg,color-mix(in srgb,var(--tone),#fff 15%),color-mix(in srgb,var(--tone),#092c27 32%));
+  }
+  .tone-panel .tone-orb{ width:86px;height:86px;border-radius:50%;background:var(--tone);box-shadow:0 14px 30px rgba(9,44,39,.22),inset 0 0 0 1px rgba(255,255,255,.35); }
+  .tone-panel strong{ font:700 18px 'Source Serif 4',serif; }
+  .tone-panel span{ max-width:220px;font:500 11px/1.45 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em; }
+  .clinical-facts{ display:grid;gap:9px;margin-bottom:15px; }
+  .clinical-fact{ padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.72); }
+  .clinical-fact strong{ display:block;margin-bottom:4px;color:var(--sage);font:500 10px 'DM Mono',monospace;text-transform:uppercase;letter-spacing:.08em; }
+  .clinical-fact span{ color:var(--dark-2);font-size:13px;line-height:1.5; }
+  .clinical-fact.alert{ border-left:4px solid var(--clay); }
+  .clinical-disclaimer{ margin:2px 0 14px;padding:10px 12px;border-radius:10px;background:rgba(227,166,47,.12);color:#5c5136;font-size:11.5px;line-height:1.5; }
+  [hidden]{ display:none !important; }
   @media (min-width:900px){
     body{ background:radial-gradient(circle at 15% 0,rgba(227,166,47,.13),transparent 32rem),radial-gradient(circle at 90% 12%,rgba(79,135,120,.16),transparent 34rem),var(--paper); }
     header{ align-items:center; }
@@ -703,6 +782,7 @@
     }
     .header-copy{ margin:0;max-width:390px;font-size:13px; }
     .sidebar{ box-shadow:0 18px 45px rgba(9,44,39,.07); }
+    .main-area > .mode-switch{ display:none; }
   }
 </style>
 </head>
@@ -711,24 +791,37 @@
 <div class="app">
   <header>
     <div>
-      <span class="eyebrow">Tópicos de Salud · Raíces Grecolatinas</span>
-      <h1>Tarjetero de Etimología Médica</h1>
+      <span class="eyebrow" id="appEyebrow">Tópicos de Salud · Raíces Grecolatinas</span>
+      <h1 id="appTitle">Tarjetero de Etimología Médica</h1>
     </div>
-    <p class="header-copy">Explora cada término, reconoce sus componentes y descubre cómo se construye el lenguaje clínico.</p>
+    <p class="header-copy" id="appDescription">Explora cada término, reconoce sus componentes y descubre cómo se construye el lenguaje clínico.</p>
   </header>
 
   <!-- SIDEBAR (solo visible en escritorio) -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-title">Mazos</div>
+    <div class="sidebar-title">Rutas de estudio</div>
+    <div class="mode-switch" aria-label="Ruta de estudio">
+      <button type="button" class="mode-btn active" data-mode="etymology">Etimología médica</button>
+      <button type="button" class="mode-btn" data-mode="clinical">Semiología cromática</button>
+    </div>
+    <div class="sidebar-title" id="deckSectionTitle">Mazos de etimología</div>
   </aside>
 
   <!-- ÁREA PRINCIPAL -->
   <div class="main-area">
 
+    <div class="mode-switch" aria-label="Ruta de estudio">
+      <button type="button" class="mode-btn active" data-mode="etymology">Etimología</button>
+      <button type="button" class="mode-btn" data-mode="clinical">Coloración clínica</button>
+    </div>
+
     <div class="decks-wrap">
       <div class="decks" id="deckSwitch"></div>
     </div>
     <div class="deck-hint">◁ desliza para ver los 14 mazos ▷</div>
+
+    <div class="tone-filters" id="toneFilters" aria-label="Filtrar por grupo de color" hidden></div>
+    <p class="clinical-disclaimer" id="clinicalDisclaimer" hidden>Material educativo. El color puede variar según el tono natural de piel, la iluminación y la cámara; no sustituye una valoración clínica.</p>
 
     <div class="meta-row">
       <span id="counter" aria-live="polite">1 / 5</span>
@@ -739,6 +832,7 @@
       <div class="card" id="card" role="button" tabindex="0" aria-label="Voltear tarjeta" aria-pressed="false">
         <div class="face front">
           <div class="term" id="termFront"></div>
+          <div class="front-meta" id="frontMeta"></div>
           <div class="hint">Clic para descifrar el significado</div>
         </div>
         <div class="face back">
@@ -749,7 +843,7 @@
               <div class="fragments" id="fragments"></div>
               <div class="suture"></div>
               <div class="definition">
-                <span class="label">Significado</span>
+                <span class="label" id="definitionLabel">Significado</span>
                 <p id="definition"></p>
               </div>
             </div>
@@ -769,7 +863,7 @@
 
   </div><!-- /main-area -->
 
-  <footer>Basado en NOM-004-SSA3-2012 · raíces griegas y latinas de uso clínico</footer>
+  <footer>Etimología grecolatina · Semiología cromática · Material educativo de apoyo</footer>
 </div>
 
 <script>
@@ -998,6 +1092,61 @@ const CARD_IMAGES = {
   "Neuralgia": "imagenes/neuralgia.webp",
   "Hipertimia": "imagenes/hipertimia.jpg"
 };
+
+const TONE_GROUPS = {
+  all:      {label:"Todos", color:"linear-gradient(135deg,#eee6d8,#e6b94d,#bf6259,#6888a8,#765945)"},
+  pale:     {label:"Pálidos / blancos", color:"#EDE7DB"},
+  yellow:   {label:"Amarillos", color:"#E3B341"},
+  red:      {label:"Rojizos / violáceos", color:"#B9565D"},
+  blue:     {label:"Azules / grisáceos", color:"#607F9E"},
+  brown:    {label:"Pardos / oscuros", color:"#795B45"},
+  special:  {label:"Especiales", color:"#557C68"}
+};
+
+const COLOR_CARDS = [
+  {term:"Palidez generalizada",group:"pale",tone:"#E8E0D2",origin:"Vascular / hematológico",appearance:"Disminución difusa del color habitual de la piel y, con frecuencia, de las mucosas.",def:"Puede relacionarse con anemia, pérdida de sangre o disminución de la perfusión cutánea por shock, frío o una respuesta emocional intensa.",clue:"Comparar conjuntivas, mucosa oral, palmas y lechos ungueales con el tono habitual de la persona.",alert:"Palidez súbita con debilidad, dificultad respiratoria, confusión o sangrado requiere valoración urgente."},
+  {term:"Palidez localizada",group:"pale",tone:"#F0E9DC",origin:"Vascular",appearance:"Área concreta más clara y, en ocasiones, fría respecto de la piel circundante.",def:"Sugiere reducción local del flujo sanguíneo por presión, vasoespasmo, hipoperfusión o isquemia.",clue:"Valorar temperatura, sensibilidad, llenado capilar y pulsos distales.",alert:"Dolor intenso, frialdad, pérdida de sensibilidad o ausencia de pulso son signos de alarma."},
+  {term:"Vitíligo",group:"pale",tone:"#F8F5EB",origin:"Pigmentario / autoinmune",appearance:"Máculas blancas bien delimitadas, sin descamación, por pérdida funcional de melanocitos.",def:"Trastorno adquirido de despigmentación que puede afectar piel y pelo de forma localizada o extensa.",clue:"Las lesiones son completamente blancas y suelen realzarse con lámpara de Wood.",alert:"Requiere valoración dermatológica para confirmar el diagnóstico y revisar asociaciones autoinmunes."},
+  {term:"Albinismo",group:"pale",tone:"#F4E7DE",origin:"Genético",appearance:"Hipopigmentación congénita generalizada de piel, cabello y, según el tipo, ojos.",def:"Grupo de trastornos hereditarios con producción reducida o ausente de melanina.",clue:"Está presente desde el nacimiento y puede acompañarse de fotofobia o alteraciones visuales.",alert:"La fotoprotección y el seguimiento dermatológico y oftalmológico son esenciales."},
+  {term:"Pitiriasis alba",group:"pale",tone:"#E7DDD0",origin:"Inflamatorio",appearance:"Parches claros, habitualmente mal delimitados, secos o con descamación fina en cara y brazos.",def:"Forma leve de dermatitis frecuente en niños y adolescentes; la hipopigmentación puede persistir al resolverse la descamación.",clue:"Suele ser poco sintomática y se nota más cuando la piel circundante se broncea.",alert:"Debe diferenciarse de vitíligo y de infecciones superficiales cuando persiste o progresa."},
+  {term:"Pitiriasis versicolor",group:"pale",tone:"#E3D8C4",origin:"Infeccioso",appearance:"Máculas claras, rosadas o pardas con descamación fina, principalmente en tronco, cuello y brazos.",def:"Infección superficial relacionada con levaduras del género Malassezia.",clue:"La escala fina y la distribución en la parte superior del tronco ayudan a distinguirla del vitíligo.",alert:"El color puede tardar semanas o meses en normalizarse aun después de controlar la infección."},
+  {term:"Hipopigmentación postinflamatoria",group:"pale",tone:"#DDD4C7",origin:"Postinflamatorio",appearance:"Áreas más claras que aparecen donde antes hubo eczema, quemadura, traumatismo o infección.",def:"Disminución temporal o persistente del pigmento después de inflamación o lesión cutánea.",clue:"El antecedente y la forma de la lesión previa orientan el diagnóstico.",alert:"Si aparece sin antecedente claro o se extiende, requiere evaluación dermatológica."},
+  {term:"Cicatriz atrófica",group:"pale",tone:"#D8D0C6",origin:"Cicatricial",appearance:"Zona hundida, fina y a menudo hipopigmentada que reemplaza tejido cutáneo lesionado.",def:"Pérdida de colágeno y tejido durante la reparación, posible tras acné, infección, lesión o procedimiento.",clue:"La depresión y el cambio de textura la distinguen de una simple alteración pigmentaria.",alert:"Cambios recientes, dolor, ulceración o crecimiento deben revisarse clínicamente."},
+
+  {term:"Ictericia",group:"yellow",tone:"#D9B43B",origin:"Metabólico / hepatobiliar",appearance:"Coloración amarilla de piel, mucosas y escleróticas.",def:"Aumento de bilirrubina relacionado con causas hepáticas, obstrucción biliar o destrucción acelerada de eritrocitos.",clue:"La esclerótica amarilla ayuda a diferenciarla de la carotenemia.",alert:"Ictericia nueva, especialmente con fiebre, dolor abdominal, confusión u orina oscura, necesita valoración médica."},
+  {term:"Carotenemia",group:"yellow",tone:"#E7A52E",origin:"Dietético / metabólico",appearance:"Color amarillo-anaranjado más visible en palmas, plantas y pliegues nasolabiales.",def:"Acumulación de carotenoides, frecuentemente por consumo elevado de alimentos ricos en betacaroteno.",clue:"Respeta las escleróticas: los ojos permanecen blancos.",alert:"Si no existe una explicación dietética clara, conviene revisar causas metabólicas."},
+  {term:"Xantomas y xantelasma",group:"yellow",tone:"#E6C552",origin:"Lipídico",appearance:"Pápulas o placas amarillentas; el xantelasma aparece con frecuencia alrededor de los párpados.",def:"Depósitos de lípidos en la piel que pueden asociarse con alteraciones del colesterol o triglicéridos.",clue:"La localización y la consistencia de la placa orientan, pero el aspecto no confirma por sí solo una dislipidemia.",alert:"Se recomienda valoración clínica y, cuando corresponde, perfil de lípidos."},
+  {term:"Pseudoxantoma elástico",group:"yellow",tone:"#CDBB65",origin:"Genético / tejido conectivo",appearance:"Pápulas amarillentas de 1–5 mm que confluyen en placas, sobre todo en cuello y pliegues.",def:"Trastorno hereditario que afecta fibras elásticas de piel, ojos y vasos sanguíneos.",clue:"La piel puede adquirir una textura laxa, arrugada o semejante a empedrado.",alert:"Requiere seguimiento especializado por sus posibles manifestaciones oculares y cardiovasculares."},
+
+  {term:"Eritema",group:"red",tone:"#C95D55",origin:"Vascular / inflamatorio",appearance:"Enrojecimiento generalmente uniforme producido por aumento del flujo sanguíneo superficial.",def:"Puede aparecer con calor, ejercicio, fiebre, inflamación, irritación o reacciones alérgicas.",clue:"Habitualmente disminuye o blanquea temporalmente al ejercer presión.",alert:"Si se acompaña de dificultad respiratoria, edema facial, fiebre alta o rápida extensión, necesita atención."},
+  {term:"Petequias",group:"red",tone:"#9F3347",origin:"Hemorrágico",appearance:"Puntos rojo-violáceos menores de 2 mm que no desaparecen al presionar.",def:"Pequeños focos de sangrado cutáneo asociados con alteraciones plaquetarias, vasculares, infecciones u otras causas.",clue:"No blanquean con presión, a diferencia de muchos eritemas vasculares.",alert:"Petequias de aparición rápida con fiebre o deterioro general requieren atención urgente."},
+  {term:"Púrpura",group:"red",tone:"#783F6B",origin:"Hemorrágico",appearance:"Áreas violáceas de aproximadamente 2–10 mm que no blanquean; pueden ser planas o palpables.",def:"Extravasación de sangre en piel que puede relacionarse con vasculitis, trastornos plaquetarios o coagulación.",clue:"La púrpura palpable orienta especialmente hacia inflamación de pequeños vasos.",alert:"La aparición extensa, dolorosa o acompañada de sangrado en otros sitios necesita evaluación médica."},
+  {term:"Equimosis",group:"red",tone:"#665078",origin:"Hemorrágico / traumático",appearance:"Área de sangrado cutáneo mayor de 10 mm, conocida comúnmente como moretón.",def:"Suele seguir a un traumatismo, aunque también puede aparecer con alteraciones de plaquetas, coagulación o medicamentos.",clue:"Cambia gradualmente de color durante la degradación de la sangre extravasada.",alert:"Equimosis frecuentes o espontáneas deben estudiarse."},
+  {term:"Hematoma",group:"red",tone:"#57405F",origin:"Hemorrágico / traumático",appearance:"Colección localizada de sangre que puede producir aumento de volumen, dolor y cambios sucesivos de color.",def:"Se forma cuando la sangre se acumula en tejidos después de una lesión vascular.",clue:"A diferencia de una equimosis superficial, puede ser palpable y ocupar planos profundos.",alert:"Un hematoma que crece, comprime estructuras o aparece tras un traumatismo importante requiere valoración."},
+  {term:"Livedo reticular",group:"red",tone:"#7A5B83",origin:"Vascular",appearance:"Patrón reticulado o en red, rojizo-violáceo, habitualmente en extremidades.",def:"Refleja cambios en el flujo de pequeños vasos; puede aparecer por frío o asociarse con trastornos vasculares, autoinmunes u otros procesos.",clue:"Observar si desaparece al calentarse o si persiste de forma asimétrica.",alert:"La persistencia, el dolor, las úlceras o síntomas sistémicos requieren evaluación."},
+  {term:"Eritema nudoso",group:"red",tone:"#B8524C",origin:"Inflamatorio",appearance:"Nódulos rojizos, calientes y dolorosos, con mayor frecuencia en la parte anterior de las piernas.",def:"Inflamación del tejido adiposo subcutáneo que puede asociarse con infecciones, medicamentos, sarcoidosis y otras enfermedades.",clue:"Los nódulos son sensibles y evolucionan como un moretón sin ulcerarse habitualmente.",alert:"Necesita valoración para identificar la causa subyacente."},
+
+  {term:"Cianosis central",group:"blue",tone:"#50779B",origin:"Hipoxémico",appearance:"Coloración azulada visible en labios, lengua y mucosa oral.",def:"Sugiere aumento de hemoglobina desoxigenada por oxigenación arterial insuficiente, como en algunas enfermedades respiratorias o cardíacas.",clue:"La afectación de lengua y mucosas la distingue de la cianosis exclusivamente periférica.",alert:"Cianosis nueva con dificultad respiratoria, dolor torácico o alteración de conciencia es una emergencia."},
+  {term:"Cianosis periférica",group:"blue",tone:"#66859A",origin:"Circulatorio",appearance:"Coloración azulada en manos, pies, nariz o lechos ungueales, a menudo con piel fría.",def:"Se relaciona con circulación periférica lenta o extracción aumentada de oxígeno, por frío, estasis o bajo gasto cardíaco.",clue:"Las mucosas centrales pueden conservar su color habitual.",alert:"Si no revierte con calentamiento o se acompaña de dolor, asimetría o falta de pulso, requiere atención."},
+  {term:"Cianosis mixta",group:"blue",tone:"#536D8B",origin:"Hipoxémico / circulatorio",appearance:"Coloración azulada tanto en mucosas centrales como en zonas distales.",def:"Combina mecanismos de oxigenación arterial reducida y circulación periférica deficiente.",clue:"Revisar simultáneamente lengua, labios, manos y pies.",alert:"Debe considerarse un hallazgo de valoración urgente."},
+  {term:"Argiria",group:"blue",tone:"#74808A",origin:"Depósito exógeno",appearance:"Pigmentación gris azulada persistente, más marcada en áreas expuestas a la luz.",def:"Depósito cutáneo de compuestos de plata después de exposición prolongada.",clue:"El antecedente ocupacional, medicinal o de suplementos con plata es fundamental.",alert:"La pigmentación suele ser permanente y requiere evaluación para detener la exposición."},
+  {term:"Pigmentación por fármacos",group:"blue",tone:"#657489",origin:"Farmacológico",appearance:"Tonos azul-grisáceos o pardos que pueden aparecer en zonas fotoexpuestas u otras distribuciones.",def:"Medicamentos como minociclina y amiodarona pueden producir pigmentación cutánea después de exposición prolongada.",clue:"Relacionar la distribución y el inicio con el medicamento, la dosis y la duración.",alert:"No debe suspenderse un medicamento prescrito sin indicación médica."},
+  {term:"Isquemia grave",group:"blue",tone:"#4D4F5C",origin:"Vascular / isquémico",appearance:"Piel gris-violácea, fría, dolorosa o insensible por aporte sanguíneo crítico.",def:"Indica perfusión tisular gravemente comprometida y riesgo de daño irreversible.",clue:"Puede acompañarse de llenado capilar lento y disminución o ausencia de pulsos.",alert:"Es una urgencia médica."},
+
+  {term:"Pigmentación constitucional",group:"brown",tone:"#865E45",origin:"Fisiológico / genético",appearance:"Tono cutáneo natural determinado principalmente por genética y cantidad, tipo y distribución de melanina.",def:"Es una variación normal y no constituye una enfermedad.",clue:"Debe usarse como referencia individual para reconocer cambios nuevos, evitando comparaciones basadas en categorías raciales rígidas.",alert:"Lo relevante clínicamente es un cambio respecto del tono habitual de la persona."},
+  {term:"Bronceado solar",group:"brown",tone:"#A76F42",origin:"Fotoinducido",appearance:"Oscurecimiento de áreas expuestas después de radiación ultravioleta.",def:"Respuesta de melanina frente a la radiación UV; representa daño cutáneo acumulativo, aunque sea temporal.",clue:"Respeta áreas cubiertas y guarda relación con exposición solar o fuentes artificiales de UV.",alert:"La fotoprotección reduce quemaduras, fotoenvejecimiento y riesgo de cáncer cutáneo."},
+  {term:"Melasma",group:"brown",tone:"#9A684F",origin:"Hormonal / fotoinducido",appearance:"Máculas marrones simétricas, principalmente en mejillas, frente y labio superior.",def:"Hiperpigmentación asociada con radiación solar y factores hormonales como embarazo o anticonceptivos.",clue:"Distribución facial simétrica y ausencia de relieve o descamación.",alert:"Debe confirmarse antes de usar tratamientos despigmentantes."},
+  {term:"Hiperpigmentación por Addison",group:"brown",tone:"#785038",origin:"Endocrino",appearance:"Oscurecimiento difuso, más notable en pliegues palmares, nudillos, cicatrices, zonas de roce y mucosa oral.",def:"Puede aparecer en insuficiencia suprarrenal primaria por aumento de ACTH y estimulación de melanocitos.",clue:"La afectación de áreas no fotoexpuestas y mucosas ayuda a diferenciarla de un bronceado solar.",alert:"Debilidad intensa, presión baja, vómitos o deshidratación pueden indicar una crisis suprarrenal."},
+  {term:"Acantosis nigricans",group:"brown",tone:"#634C3E",origin:"Metabólico / endocrino",appearance:"Placas gris-marrones engrosadas y aterciopeladas en cuello, axilas y otros pliegues.",def:"Se asocia con frecuencia con resistencia a la insulina y obesidad, aunque también puede relacionarse con endocrinopatías, medicamentos y otras causas.",clue:"La textura aterciopelada y el engrosamiento son tan importantes como el color.",alert:"La aparición rápida, extensa o en una persona sin factores metabólicos requiere valoración."},
+  {term:"Hemocromatosis",group:"brown",tone:"#6F6257",origin:"Depósito / metabólico",appearance:"Pigmentación difusa gris bronce que puede acompañar otros signos sistémicos.",def:"Puede relacionarse con sobrecarga de hierro en tejidos; el color cutáneo por sí solo no establece el diagnóstico.",clue:"Se interpreta junto con antecedentes, síntomas y estudios de hierro.",alert:"Requiere confirmación mediante evaluación médica y pruebas de laboratorio."},
+  {term:"Léntigos",group:"brown",tone:"#8C583A",origin:"Pigmentario / fotoinducido",appearance:"Máculas planas, marrones y bien delimitadas, frecuentes en áreas expuestas al sol.",def:"Aumento localizado de pigmento asociado con edad, exposición solar o determinados síndromes.",clue:"Son planos y generalmente uniformes; cualquier cambio debe compararse con el resto de lesiones.",alert:"Asimetría, bordes irregulares, múltiples colores o evolución justifican valoración dermatológica."},
+  {term:"Manchas café con leche",group:"brown",tone:"#B88761",origin:"Congénito / genético",appearance:"Máculas planas de color marrón claro, presentes desde el nacimiento o de aparición temprana.",def:"Una o pocas pueden ser una variante aislada; múltiples lesiones pueden asociarse con síndromes genéticos como neurofibromatosis.",clue:"Registrar número, tamaño y evolución según la edad.",alert:"La presencia de varias manchas debe valorarse clínicamente, especialmente en la infancia."},
+
+  {term:"Coloración verde",group:"special",tone:"#4E8567",origin:"Infeccioso / exógeno",appearance:"Tono verde localizado, especialmente en uñas, heridas, apósitos o secreciones.",def:"Puede relacionarse con pigmentos producidos por Pseudomonas, exudados o sustancias externas; no es una coloración cutánea general específica.",clue:"Precisar si el color proviene de la piel, la uña, una herida o una secreción.",alert:"Herida con olor, dolor, fiebre o secreción verdosa necesita valoración."},
+  {term:"Coloración negruzca",group:"special",tone:"#252724",origin:"Isquémico / pigmentario",appearance:"Área negra o muy oscura que puede corresponder a tejido desvitalizado, escara o una lesión intensamente pigmentada.",def:"Puede aparecer en necrosis y gangrena; algunas lesiones pigmentadas también pueden ser oscuras, pero el color aislado no diagnostica melanoma.",clue:"Valorar dolor, temperatura, textura, bordes, evolución y perfusión.",alert:"Tejido negro de aparición reciente, dolor intenso, mal olor o signos de infección requieren atención urgente."},
+  {term:"Eritema heliotropo",group:"special",tone:"#80608D",origin:"Inflamatorio / autoinmune",appearance:"Coloración lila o violácea alrededor de los párpados, a menudo acompañada de edema.",def:"Hallazgo característico que puede asociarse con dermatomiositis.",clue:"Buscar debilidad muscular proximal y otras lesiones cutáneas compatibles.",alert:"Requiere evaluación médica para confirmar la causa y descartar afectación sistémica."},
+  {term:"Coloración naranja",group:"special",tone:"#D97930",origin:"Metabólico / depósito",appearance:"Tono amarillo-anaranjado localizado o difuso.",def:"Puede relacionarse con carotenoides, algunos medicamentos o depósitos lipídicos según la distribución.",clue:"La conservación de escleróticas orienta hacia carotenoides y no hacia ictericia.",alert:"El contexto dietético, farmacológico y metabólico determina la evaluación necesaria."}
+];
 
 const DECKS = {
   endocrinologia: {
@@ -1794,6 +1943,8 @@ const ICONS = {
 };
 
 let currentDeck = "endocrinologia";
+let studyMode = "etymology";
+let currentTone = "all";
 let order = [];
 let index = 0;
 let flipped = false;
@@ -1801,12 +1952,60 @@ let flipped = false;
 const deckSwitch = document.getElementById('deckSwitch');
 const card = document.getElementById('card');
 const termFront = document.getElementById('termFront');
+const frontMetaEl = document.getElementById('frontMeta');
 const termBack = document.getElementById('termBack');
 const fragmentsEl = document.getElementById('fragments');
 const definitionEl = document.getElementById('definition');
 const clinicalVisualEl = document.getElementById('clinicalVisual');
 const counterEl = document.getElementById('counter');
 const progressEl = document.getElementById('progress');
+const definitionLabelEl = document.getElementById('definitionLabel');
+const toneFiltersEl = document.getElementById('toneFilters');
+const clinicalDisclaimerEl = document.getElementById('clinicalDisclaimer');
+
+function getCurrentCards(){
+  if(studyMode === 'clinical'){
+    return currentTone === 'all' ? COLOR_CARDS : COLOR_CARDS.filter(card => card.group === currentTone);
+  }
+  return DECKS[currentDeck].cards;
+}
+
+function setStudyMode(mode){
+  studyMode = mode;
+  currentTone = 'all';
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    const active = btn.dataset.mode === mode;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', String(active));
+  });
+  document.getElementById('sidebar').classList.toggle('clinical-mode', mode === 'clinical');
+  document.querySelector('.decks-wrap').hidden = mode === 'clinical';
+  document.querySelector('.deck-hint').hidden = mode === 'clinical';
+  toneFiltersEl.hidden = mode !== 'clinical';
+  clinicalDisclaimerEl.hidden = mode !== 'clinical';
+  document.getElementById('appEyebrow').textContent = mode === 'clinical' ? 'Tópicos de Salud · Observación clínica' : 'Tópicos de Salud · Raíces Grecolatinas';
+  document.getElementById('appTitle').textContent = mode === 'clinical' ? 'Atlas de Semiología Cromática' : 'Tarjetero de Etimología Médica';
+  document.getElementById('appDescription').textContent = mode === 'clinical'
+    ? 'Reconoce cambios de color, su posible origen y los datos que ayudan a interpretarlos con prudencia.'
+    : 'Explora cada término, reconoce sus componentes y descubre cómo se construye el lenguaje clínico.';
+  buildToneFilters();
+  resetDeck();
+}
+
+function buildToneFilters(){
+  toneFiltersEl.replaceChildren();
+  Object.entries(TONE_GROUPS).forEach(([key,group]) => {
+    const count = key === 'all' ? COLOR_CARDS.length : COLOR_CARDS.filter(card => card.group === key).length;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tone-filter' + (key === currentTone ? ' active' : '');
+    btn.style.setProperty('--swatch', group.color);
+    btn.setAttribute('aria-pressed', String(key === currentTone));
+    btn.innerHTML = `<span class="tone-filter-swatch" aria-hidden="true"></span><span>${group.label} · ${count}</span>`;
+    btn.onclick = () => { currentTone = key; buildToneFilters(); resetDeck(); };
+    toneFiltersEl.appendChild(btn);
+  });
+}
 
 function buildDeckSwitch(){
   deckSwitch.innerHTML = '';
@@ -1843,7 +2042,7 @@ function buildDeckSwitch(){
 }
 
 function resetDeck(){
-  order = DECKS[currentDeck].cards.map((_,i)=>i);
+  order = getCurrentCards().map((_,i)=>i);
   index = 0;
   setFlipped(false);
   buildDeckSwitch();
@@ -1868,7 +2067,7 @@ function shuffle(){
 }
 
 function render(){
-  const deck = DECKS[currentDeck].cards;
+  const deck = getCurrentCards();
   const c = deck[order[index]];
 
   if(!c){
@@ -1886,34 +2085,70 @@ function render(){
   termFront.textContent = c.term;
   termBack.textContent = c.term;
   definitionEl.textContent = c.def;
+  fragmentsEl.replaceChildren();
 
-  const imagePath = CARD_IMAGES[c.term];
-  if(imagePath){
-    const img = document.createElement('img');
-    img.src = imagePath;
-    img.alt = `Representación clínica de ${c.term}`;
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    img.addEventListener('error', () => {
+  if(studyMode === 'clinical'){
+    definitionLabelEl.textContent = 'Significado clínico principal';
+    frontMetaEl.style.setProperty('--tone', c.tone);
+    frontMetaEl.innerHTML = `<span class="front-meta-dot" aria-hidden="true"></span><span>${TONE_GROUPS[c.group].label} · ${c.origin}</span>`;
+
+    const tonePanel = document.createElement('div');
+    tonePanel.className = 'tone-panel';
+    tonePanel.style.setProperty('--tone', c.tone);
+    const orb = document.createElement('span');
+    orb.className = 'tone-orb';
+    orb.setAttribute('aria-hidden','true');
+    const toneName = document.createElement('strong');
+    toneName.textContent = TONE_GROUPS[c.group].label;
+    const origin = document.createElement('span');
+    origin.textContent = c.origin;
+    tonePanel.append(orb,toneName,origin);
+    clinicalVisualEl.replaceChildren(tonePanel);
+    clinicalVisualEl.hidden = false;
+
+    fragmentsEl.className = 'clinical-facts';
+    [['Qué se observa',c.appearance,false],['Dato diferenciador',c.clue,false],['Atención',c.alert,true]].forEach(([label,value,isAlert]) => {
+      const fact = document.createElement('div');
+      fact.className = 'clinical-fact' + (isAlert ? ' alert' : '');
+      const heading = document.createElement('strong');
+      heading.textContent = label;
+      const text = document.createElement('span');
+      text.textContent = value;
+      fact.append(heading,text);
+      fragmentsEl.appendChild(fact);
+    });
+  }else{
+    definitionLabelEl.textContent = 'Significado';
+    frontMetaEl.replaceChildren();
+    fragmentsEl.className = 'fragments';
+
+    const imagePath = CARD_IMAGES[c.term];
+    if(imagePath){
+      const img = document.createElement('img');
+      img.src = imagePath;
+      img.alt = `Representación clínica de ${c.term}`;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.addEventListener('error', () => {
+        clinicalVisualEl.replaceChildren();
+        clinicalVisualEl.hidden = true;
+      }, {once:true});
+      clinicalVisualEl.replaceChildren(img);
+      clinicalVisualEl.hidden = false;
+    }else{
       clinicalVisualEl.replaceChildren();
       clinicalVisualEl.hidden = true;
-    }, {once:true});
-    clinicalVisualEl.replaceChildren(img);
-    clinicalVisualEl.hidden = false;
-  }else{
-    clinicalVisualEl.replaceChildren();
-    clinicalVisualEl.hidden = true;
-  }
+    }
 
-  fragmentsEl.innerHTML = '';
-  c.parts.forEach(p=>{
-    const div = document.createElement('div');
-    div.className = 'frag ' + p.tag;
-    div.innerHTML = `<span class="piece">${p.piece}</span><br>
-      <span class="tag">${p.tag === 'prefijo' ? 'Prefijo' : p.tag === 'sufijo' ? 'Sufijo' : 'Raíz'}</span>
-      <span class="meaning">${p.meaning}</span>`;
-    fragmentsEl.appendChild(div);
-  });
+    c.parts.forEach(p=>{
+      const div = document.createElement('div');
+      div.className = 'frag ' + p.tag;
+      div.innerHTML = `<span class="piece">${p.piece}</span><br>
+        <span class="tag">${p.tag === 'prefijo' ? 'Prefijo' : p.tag === 'sufijo' ? 'Sufijo' : 'Raíz'}</span>
+        <span class="meaning">${p.meaning}</span>`;
+      fragmentsEl.appendChild(div);
+    });
+  }
 
   counterEl.textContent = `${index+1} / ${deck.length}`;
 
@@ -1941,18 +2176,24 @@ card.addEventListener('keydown', (e)=>{
 });
 
 document.getElementById('nextBtn').onclick = ()=>{
-  const len = DECKS[currentDeck].cards.length;
+  const len = getCurrentCards().length;
+  if(!len) return;
   index = (index+1) % len;
   setFlipped(false);
   render();
 };
 document.getElementById('prevBtn').onclick = ()=>{
-  const len = DECKS[currentDeck].cards.length;
+  const len = getCurrentCards().length;
+  if(!len) return;
   index = (index-1+len) % len;
   setFlipped(false);
   render();
 };
 document.getElementById('shuffleBtn').onclick = shuffle;
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.setAttribute('aria-pressed', String(btn.dataset.mode === studyMode));
+  btn.addEventListener('click', () => setStudyMode(btn.dataset.mode));
+});
 
 document.addEventListener('keydown', (e)=>{
   if(e.target.closest('button, a, input, textarea, select, [contenteditable="true"], #card')) return;
@@ -1980,6 +2221,7 @@ function adjustCardHeight(){
 
 window.addEventListener('resize', adjustCardHeight);
 
+buildToneFilters();
 resetDeck();
 </script>
 </body>
