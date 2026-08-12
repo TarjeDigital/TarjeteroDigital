@@ -439,11 +439,12 @@
       padding:0;
       display:grid;
       grid-template-columns:260px 1fr;
-      grid-template-rows:auto auto 1fr auto;
+      grid-template-rows:auto auto 1fr auto auto;
       grid-template-areas:
         "institution institution"
         "header  header"
         "sidebar main"
+        "references references"
         "footer  footer";
       gap:0 32px;
     }
@@ -645,14 +646,6 @@
   }
   .institutional-logo img{display:block;width:100%;height:auto;}
   .institutional-copy{min-width:0;}
-  .institutional-kicker{
-    display:block;
-    margin-bottom:4px;
-    color:var(--sage);
-    font:500 9px/1.4 'DM Mono',monospace;
-    letter-spacing:.11em;
-    text-transform:uppercase;
-  }
   .institutional-name{
     margin:0;
     color:var(--dark-2);
@@ -774,6 +767,12 @@
     background:rgba(255,255,255,.44);
     box-shadow:none;
   }
+  .nav button:disabled,.meta-row button:disabled{
+    opacity:.42;
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
+  }
   .progress .dot{ transition:transform .2s,background .2s; }
   .progress .dot.current{ background:var(--clay); }
   .empty-state{
@@ -785,7 +784,7 @@
   }
   .mode-switch{
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(3,1fr);
     gap:6px;
     padding:5px;
     margin:4px 0 14px;
@@ -861,6 +860,229 @@
   .clinical-fact span{ color:var(--dark-2);font-size:13px;line-height:1.5; }
   .clinical-fact.alert{ border-left:4px solid var(--clay); }
   .clinical-disclaimer{ margin:2px 0 14px;padding:10px 12px;border-radius:10px;background:rgba(227,166,47,.12);color:#5c5136;font-size:11.5px;line-height:1.5; }
+
+  /* Laboratorio de construcción clínica */
+  .lab-panel{
+    display:grid;
+    gap:18px;
+  }
+  .lab-intro{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:18px;
+    padding:20px;
+    border:1px solid rgba(18,61,54,.13);
+    border-radius:18px;
+    background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(231,239,233,.86));
+    box-shadow:0 14px 34px rgba(9,44,39,.07);
+  }
+  .lab-kicker{
+    margin:0 0 5px;
+    color:var(--sage);
+    font:700 10px 'DM Mono',monospace;
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .lab-intro h2{
+    margin:0;
+    color:var(--dark);
+    font:700 clamp(22px,3vw,30px)/1.1 'Source Serif 4',serif;
+  }
+  .lab-intro-copy{
+    max-width:560px;
+    margin:7px 0 0;
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.55;
+  }
+  .lab-stats{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(66px,1fr));
+    gap:7px;
+    flex:0 0 auto;
+  }
+  .lab-stat{
+    min-width:70px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:11px;
+    background:rgba(255,255,255,.82);
+    text-align:center;
+  }
+  .lab-stat span{
+    display:block;
+    color:var(--muted);
+    font:600 8px 'DM Mono',monospace;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .lab-stat strong{
+    display:block;
+    margin-top:3px;
+    color:var(--dark);
+    font:700 16px 'Manrope',sans-serif;
+  }
+  .lab-round-track{
+    height:7px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#dce5de;
+  }
+  .lab-round-bar{
+    width:0;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,var(--sage),var(--amber));
+    transition:width .3s ease;
+  }
+  .lab-workbench{
+    padding:clamp(20px,4vw,34px);
+    border:1px solid rgba(18,61,54,.14);
+    border-radius:24px;
+    background:
+      radial-gradient(circle at 90% 0,rgba(227,166,47,.11),transparent 18rem),
+      #fff;
+    box-shadow:0 20px 48px rgba(9,44,39,.09);
+  }
+  .lab-clue-label,.lab-zone-label{
+    display:block;
+    color:var(--sage);
+    font:700 9px 'DM Mono',monospace;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+  .lab-clue{
+    margin:7px 0 23px;
+    color:var(--dark-2);
+    font:650 clamp(17px,2.4vw,22px)/1.45 'Source Serif 4',serif;
+  }
+  .lab-slots{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(125px,1fr));
+    gap:10px;
+    margin:9px 0 22px;
+  }
+  .lab-slot{
+    min-height:104px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px;
+    border:2px dashed #bfd0c5;
+    border-radius:15px;
+    background:#f5f8f5;
+    transition:border-color .18s,background .18s,transform .18s;
+  }
+  .lab-slot.drag-over{
+    border-color:var(--amber);
+    background:rgba(227,166,47,.1);
+    transform:translateY(-2px);
+  }
+  .lab-slot.correct{border-color:#4f8778;background:#eef7f2;}
+  .lab-slot.incorrect{border-color:#b85c4b;background:#fff1ee;}
+  .lab-slot-type{
+    color:#7d8d84;
+    font:600 9px 'DM Mono',monospace;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+  }
+  .lab-slot-placeholder{
+    color:#a3afa7;
+    font-size:11px;
+  }
+  .lab-piece{
+    min-width:90px;
+    max-width:100%;
+    padding:11px 13px;
+    border:1px solid rgba(18,61,54,.2);
+    border-radius:12px;
+    background:#fff;
+    color:var(--dark);
+    box-shadow:0 7px 16px rgba(9,44,39,.08);
+    font:700 16px 'Source Serif 4',serif;
+    cursor:grab;
+    overflow-wrap:anywhere;
+  }
+  .lab-piece:active{cursor:grabbing;}
+  .lab-piece:hover{border-color:var(--sage);transform:translateY(-1px);}
+  .lab-pool{
+    min-height:76px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-top:9px;
+    padding:15px;
+    border:1px solid var(--line);
+    border-radius:15px;
+    background:var(--paper);
+  }
+  .lab-pool.drag-over{outline:2px solid var(--amber);outline-offset:2px;}
+  .lab-feedback{
+    min-height:52px;
+    margin:17px 0 0;
+    padding:12px 14px;
+    border-radius:12px;
+    background:#f2f5f2;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+  }
+  .lab-feedback.success{background:#e8f4ed;color:#245c4e;}
+  .lab-feedback.error{background:#fff0ed;color:#8a3e31;}
+  .lab-feedback strong{color:inherit;}
+  .lab-actions{
+    display:grid;
+    grid-template-columns:1fr 1.35fr;
+    gap:10px;
+    margin-top:15px;
+  }
+  .lab-actions button,.lab-summary button{
+    min-height:46px;
+    border:0;
+    border-radius:13px;
+    padding:12px 16px;
+    background:var(--dark);
+    color:#fff;
+    font:700 13px 'Manrope',sans-serif;
+    cursor:pointer;
+  }
+  .lab-actions .secondary{
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--dark);
+  }
+  #labNextBtn{grid-column:1 / -1;}
+  .lab-actions button:disabled{opacity:.45;cursor:not-allowed;}
+  .lab-summary{
+    padding:32px 22px;
+    border:1px solid rgba(18,61,54,.14);
+    border-radius:24px;
+    background:linear-gradient(145deg,#fff,#eaf2ec);
+    box-shadow:0 20px 48px rgba(9,44,39,.09);
+    text-align:center;
+  }
+  .lab-summary-badge{font-size:42px;line-height:1;}
+  .lab-summary h3{margin:12px 0 5px;color:var(--dark);font:700 28px 'Source Serif 4',serif;}
+  .lab-summary p{max-width:520px;margin:0 auto 18px;color:var(--muted);font-size:13px;line-height:1.55;}
+  .lab-summary strong{color:var(--dark);}
+  .lab-empty{padding:32px;text-align:center;color:var(--muted);}
+  .lab-piece:focus-visible,.lab-actions button:focus-visible,.lab-summary button:focus-visible{
+    outline:3px solid var(--amber);
+    outline-offset:3px;
+  }
+  @media (max-width:700px){
+    .lab-intro{display:grid;}
+    .lab-stats{width:100%;}
+    .lab-stat{min-width:0;}
+    .lab-actions{grid-template-columns:1fr;}
+    .lab-slots{grid-template-columns:repeat(auto-fit,minmax(100px,1fr));}
+    .lab-workbench{padding:19px 14px;}
+  }
   [hidden]{ display:none !important; }
   @media (min-width:900px){
     body{ background:radial-gradient(circle at 15% 0,rgba(227,166,47,.13),transparent 32rem),radial-gradient(circle at 90% 12%,rgba(79,135,120,.16),transparent 34rem),var(--paper); }
@@ -896,6 +1118,71 @@
     .student-card{grid-column:1 / -1;}
     .student-value{font-size:11px;}
   }
+  /* Referencias bibliográficas */
+  .references-panel{
+    margin-top:34px;
+    padding:24px;
+    border:1px solid rgba(18,61,54,.14);
+    border-radius:20px;
+    background:rgba(255,255,255,.82);
+    box-shadow:0 18px 45px rgba(9,44,39,.07);
+  }
+  .references-kicker{
+    margin:0 0 6px;
+    color:var(--sage);
+    font-family:'DM Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+  }
+  .references-panel h2{
+    margin:0;
+    color:var(--dark);
+    font-family:'Source Serif 4',serif;
+    font-size:clamp(23px,3vw,30px);
+    letter-spacing:-.02em;
+  }
+  .references-intro{
+    max-width:760px;
+    margin:8px 0 20px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.6;
+  }
+  .apa-references{
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+  .apa-references li{
+    margin:0;
+    padding:12px 0 12px 24px;
+    border-top:1px solid rgba(18,61,54,.1);
+    color:var(--ink);
+    font-size:13px;
+    line-height:1.65;
+    text-indent:-24px;
+    overflow-wrap:anywhere;
+  }
+  .apa-references li:last-child{padding-bottom:0;}
+  .apa-references a{
+    color:var(--dark-2);
+    text-decoration-color:rgba(18,61,54,.35);
+    text-underline-offset:3px;
+  }
+  .apa-references a:hover{text-decoration-color:var(--amber);}
+  @media (min-width:900px){
+    .references-panel{
+      grid-area:references;
+      margin-top:34px;
+      padding:28px 32px;
+    }
+  }
+  @media (max-width:600px){
+    .references-panel{padding:20px 16px;}
+    .apa-references li{font-size:12px;}
+  }
 </style>
 </head>
 <body>
@@ -906,7 +1193,6 @@
       <img src="logo-upchi.jpg" alt="Logotipo oficial de la Universidad Politécnica de Chimalhuacán">
     </div>
     <div class="institutional-copy">
-      <span class="institutional-kicker">Presentación académica</span>
       <p class="institutional-name" id="institutionName">Universidad Politécnica de Chimalhuacán</p>
       <p class="institutional-degree">Licenciatura en Enfermería</p>
     </div>
@@ -939,6 +1225,7 @@
     <div class="mode-switch" aria-label="Ruta de estudio">
       <button type="button" class="mode-btn active" data-mode="etymology">Etimología médica</button>
       <button type="button" class="mode-btn" data-mode="clinical">Semiología cromática</button>
+      <button type="button" class="mode-btn" data-mode="lab">Laboratorio</button>
     </div>
     <div class="sidebar-title" id="deckSectionTitle">Mazos de etimología</div>
   </aside>
@@ -949,15 +1236,17 @@
     <div class="mode-switch" aria-label="Ruta de estudio">
       <button type="button" class="mode-btn active" data-mode="etymology">Etimología</button>
       <button type="button" class="mode-btn" data-mode="clinical">Coloración clínica</button>
+      <button type="button" class="mode-btn" data-mode="lab">Laboratorio</button>
     </div>
 
     <div class="decks-wrap">
       <div class="decks" id="deckSwitch"></div>
     </div>
-    <div class="deck-hint">◁ desliza para ver los 14 mazos ▷</div>
+    <div class="deck-hint">◁ desliza para ver los 13 mazos ▷</div>
 
-    <div class="tone-filters" id="toneFilters" aria-label="Filtrar por grupo de color" hidden></div>
-    <p class="clinical-disclaimer" id="clinicalDisclaimer" hidden>Material educativo. El color puede variar según el tono natural de piel, la iluminación y la cámara; no sustituye una valoración clínica.</p>
+    <div id="studyWorkspace">
+      <div class="tone-filters" id="toneFilters" aria-label="Filtrar por grupo de color" hidden></div>
+      <p class="clinical-disclaimer" id="clinicalDisclaimer" hidden>Material educativo. El color puede variar según el tono natural de piel, la iluminación y la cámara; no sustituye una valoración clínica.</p>
 
     <div class="meta-row">
       <span id="counter" aria-live="polite">1 / 5</span>
@@ -992,12 +1281,63 @@
 
     <div class="progress" id="progress" aria-hidden="true"></div>
 
-    <div class="nav">
-      <button type="button" class="ghost" id="prevBtn" aria-label="Tarjeta anterior">◁ Anterior</button>
-      <button type="button" id="nextBtn" aria-label="Tarjeta siguiente">Siguiente ▷</button>
-    </div>
+      <div class="nav">
+        <button type="button" class="ghost" id="prevBtn" aria-label="Tarjeta anterior">◁ Anterior</button>
+        <button type="button" id="nextBtn" aria-label="Tarjeta siguiente">Siguiente ▷</button>
+      </div>
+    </div><!-- /studyWorkspace -->
+
+    <section class="lab-panel" id="labPanel" aria-labelledby="labTitle" hidden>
+      <div class="lab-intro">
+        <div>
+          <p class="lab-kicker">Aprendizaje activo</p>
+          <h2 id="labTitle">Laboratorio de construcción clínica</h2>
+          <p class="lab-intro-copy">Ordena los fragmentos para formar el término que corresponde al significado. Puedes arrastrarlos o seleccionarlos con un toque.</p>
+        </div>
+        <div class="lab-stats" aria-label="Marcador del laboratorio">
+          <div class="lab-stat"><span>Ronda</span><strong id="labRoundStat">1/5</strong></div>
+          <div class="lab-stat"><span>Puntos</span><strong id="labScoreStat">0</strong></div>
+          <div class="lab-stat"><span>Racha</span><strong id="labStreakStat">0</strong></div>
+        </div>
+      </div>
+      <div class="lab-round-track" role="progressbar" aria-label="Progreso del laboratorio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="lab-round-bar" id="labRoundBar"></div>
+      </div>
+      <div class="lab-workbench" id="labWorkbench">
+        <span class="lab-clue-label">Significado clínico</span>
+        <p class="lab-clue" id="labClue"></p>
+        <span class="lab-zone-label">Construye el término</span>
+        <div class="lab-slots" id="labSlots" aria-label="Espacios para construir el término"></div>
+        <span class="lab-zone-label">Fragmentos disponibles</span>
+        <div class="lab-pool" id="labPool" aria-label="Fragmentos disponibles"></div>
+        <div class="lab-feedback" id="labFeedback" role="status" aria-live="polite">Selecciona un fragmento para colocarlo en el primer espacio disponible.</div>
+        <div class="lab-actions">
+          <button type="button" class="secondary" id="labHintBtn">Mostrar una pista</button>
+          <button type="button" id="labCheckBtn">Comprobar construcción</button>
+          <button type="button" id="labNextBtn" hidden>Siguiente término</button>
+        </div>
+      </div>
+      <div class="lab-summary" id="labSummary" hidden>
+        <div class="lab-summary-badge" id="labSummaryBadge" aria-hidden="true">✓</div>
+        <h3>Laboratorio completado</h3>
+        <p id="labSummaryText"></p>
+        <button type="button" id="labRestartBtn">Practicar otra vez</button>
+      </div>
+    </section>
 
   </div><!-- /main-area -->
+
+  <section class="references-panel" id="referencias" aria-labelledby="referencesTitle">
+    <p class="references-kicker">Fuentes consultadas</p>
+    <h2 id="referencesTitle">Referencias</h2>
+    <p class="references-intro">Documentos de apoyo utilizados para fundamentar la terminología, las abreviaturas y los valores clínicos presentados. Referencias organizadas según el formato APA, 7.ª edición.</p>
+    <ol class="apa-references">
+      <li>León Hernández, Y. (2022). <em>Abreviaturas utilizadas en el ECOM-CR</em> [Documento de apoyo]. Colegio de Médicos y Cirujanos de Costa Rica.</li>
+      <li>Saldaña Ambulódegui, E. (2012). <em>Manual de terminología médica</em>.</li>
+      <li>Sánchez González, M. Á. (2012). Terminología médica. En <em>Historia de la medicina y humanidades médicas</em> (2.ª ed., pp. e18–e42). Elsevier España. <a href="https://doi.org/10.1016/B978-84-458-2115-2.00040-6" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/B978-84-458-2115-2.00040-6</a></li>
+      <li><em>Tablas de referencia clínica: QS, serología y biometría hemática</em> [Material de presentación académica]. (s. f.).</li>
+    </ol>
+  </section>
 
   <footer>Etimología grecolatina · Semiología cromática · Material educativo de apoyo</footer>
 </div>
@@ -1930,11 +2270,6 @@ const DECKS = {
         {tag:"sufijo",piece:"-itis",meaning:"inflamación"} ]},
     ]
   },
-  embarazoParto: {
-    label: "Embarazo y Parto",
-    cards: [
-    ]
-  },
   sentidos: {
     label: "Órganos de los Sentidos",
     cards: [
@@ -2072,7 +2407,6 @@ const ICONS = {
   urinario: '<path d="M9.3 4.3c-3 2-4 5.3-2 8.2-2 2.2-2 6.3 1 8.2 2.1 1.2 5.2 1 6.3-1 3-2 3-6.3 1-8.2 2-3.1 1-6.3-2-8.2"/>',
   reproductorM: '<circle cx="9.5" cy="14.5" r="5.5"/><path d="M13.4 10.6L19 5M19 5h-4.5M19 5v4.5"/>',
   reproductorF: '<circle cx="12" cy="8.5" r="5.5"/><path d="M12 14v6.5M8.8 18h6.4"/>',
-  embarazoParto: '<circle cx="12" cy="14" r="7"/><circle cx="12" cy="12" r="1.8"/>',
   sentidos: '<path d="M2.5 12s4-6 9.5-6 9.5 6 9.5 6-4 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.8"/>',
   infecciosas: '<circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3M6.5 6.5l1.8 1.8M15.7 15.7l1.8 1.8M6.5 17.5l1.8-1.8M15.7 8.3l1.8-1.8"/>',
   tumores: '<path d="M8.2 5.3c-3 1-5 4.2-4 7.9 1 3.1 4.1 5.9 8 5.7 3.9-.3 6.1-3.5 5.8-7.4-.3-3.9-3.5-6.2-7.4-5.9-.9.1-1.7.4-2.4-.3z"/>'
@@ -2084,6 +2418,17 @@ let currentTone = "all";
 let order = [];
 let index = 0;
 let flipped = false;
+const LAB_ROUNDS = 5;
+let labQueue = [];
+let labRound = 0;
+let labScore = 0;
+let labStreak = 0;
+let labAttempts = 0;
+let labHintUsed = false;
+let labLocked = false;
+let labEvaluated = false;
+let labPlaced = [];
+let labPoolOrder = [];
 
 const deckSwitch = document.getElementById('deckSwitch');
 const card = document.getElementById('card');
@@ -2098,6 +2443,21 @@ const progressEl = document.getElementById('progress');
 const definitionLabelEl = document.getElementById('definitionLabel');
 const toneFiltersEl = document.getElementById('toneFilters');
 const clinicalDisclaimerEl = document.getElementById('clinicalDisclaimer');
+const studyWorkspaceEl = document.getElementById('studyWorkspace');
+const labPanelEl = document.getElementById('labPanel');
+const labWorkbenchEl = document.getElementById('labWorkbench');
+const labSummaryEl = document.getElementById('labSummary');
+const labClueEl = document.getElementById('labClue');
+const labSlotsEl = document.getElementById('labSlots');
+const labPoolEl = document.getElementById('labPool');
+const labFeedbackEl = document.getElementById('labFeedback');
+const labRoundStatEl = document.getElementById('labRoundStat');
+const labScoreStatEl = document.getElementById('labScoreStat');
+const labStreakStatEl = document.getElementById('labStreakStat');
+const labRoundBarEl = document.getElementById('labRoundBar');
+const labHintBtn = document.getElementById('labHintBtn');
+const labCheckBtn = document.getElementById('labCheckBtn');
+const labNextBtn = document.getElementById('labNextBtn');
 
 function getCurrentCards(){
   if(studyMode === 'clinical'){
@@ -2107,6 +2467,7 @@ function getCurrentCards(){
 }
 
 function setStudyMode(mode){
+  if(!['etymology','clinical','lab'].includes(mode)) return;
   studyMode = mode;
   currentTone = 'all';
   document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -2119,11 +2480,18 @@ function setStudyMode(mode){
   document.querySelector('.deck-hint').hidden = mode === 'clinical';
   toneFiltersEl.hidden = mode !== 'clinical';
   clinicalDisclaimerEl.hidden = mode !== 'clinical';
-  document.getElementById('appEyebrow').textContent = mode === 'clinical' ? 'Tópicos de Salud · Observación clínica' : 'Tópicos de Salud · Raíces Grecolatinas';
-  document.getElementById('appTitle').textContent = mode === 'clinical' ? 'Semiología Cromática' : 'Tarjetero de Etimología Médica';
-  document.getElementById('appDescription').textContent = mode === 'clinical'
-    ? 'Reconoce cambios de color, su posible origen y los datos que ayudan a interpretarlos con prudencia.'
-    : 'Explora cada término, reconoce sus componentes y descubre cómo se construye el lenguaje clínico.';
+  studyWorkspaceEl.hidden = mode === 'lab';
+  labPanelEl.hidden = mode !== 'lab';
+  document.getElementById('deckSectionTitle').textContent = mode === 'lab' ? 'Sistema para practicar' : 'Mazos de etimología';
+
+  const headings = {
+    etymology: ['Tópicos de Salud · Raíces Grecolatinas','Tarjetero de Etimología Médica','Explora cada término, reconoce sus componentes y descubre cómo se construye el lenguaje clínico.'],
+    clinical: ['Tópicos de Salud · Observación clínica','Semiología Cromática','Reconoce cambios de color, su posible origen y los datos que ayudan a interpretarlos con prudencia.'],
+    lab: ['Tópicos de Salud · Aprendizaje activo','Laboratorio de Construcción Clínica','Construye términos médicos al ordenar sus prefijos, raíces y sufijos.']
+  };
+  document.getElementById('appEyebrow').textContent = headings[mode][0];
+  document.getElementById('appTitle').textContent = headings[mode][1];
+  document.getElementById('appDescription').textContent = headings[mode][2];
   buildToneFilters();
   resetDeck();
 }
@@ -2158,9 +2526,8 @@ function buildDeckSwitch(){
     btn.type = 'button';
     btn.innerHTML = `<svg viewBox="0 0 24 24">${icon}</svg><span>${DECKS[key].label}</span>`;
     btn.className = key === currentDeck ? 'active' : '';
-    btn.disabled = count === 0;
-    btn.title = count === 0 ? 'Contenido próximamente' : `${count} tarjetas`;
-    btn.setAttribute('aria-label', count === 0 ? `${DECKS[key].label}, contenido próximamente` : `${DECKS[key].label}, ${count} tarjetas`);
+    btn.title = count === 0 ? 'Mazo sin tarjetas todavía' : `${count} tarjetas`;
+    btn.setAttribute('aria-label', count === 0 ? `${DECKS[key].label}, mazo sin tarjetas todavía` : `${DECKS[key].label}, ${count} tarjetas`);
     btn.onclick = () => { currentDeck = key; resetDeck(); };
     deckSwitch.appendChild(btn);
 
@@ -2169,9 +2536,8 @@ function buildDeckSwitch(){
     sb.type = 'button';
     sb.className = 'sidebar-btn' + (key === currentDeck ? ' active' : '');
     sb.innerHTML = `<svg viewBox="0 0 24 24">${icon}</svg><span>${DECKS[key].label}</span><span class="sidebar-count">${count}</span>`;
-    sb.disabled = count === 0;
-    sb.title = count === 0 ? 'Contenido próximamente' : `${count} tarjetas`;
-    sb.setAttribute('aria-label', count === 0 ? `${DECKS[key].label}, contenido próximamente` : `${DECKS[key].label}, ${count} tarjetas`);
+    sb.title = count === 0 ? 'Mazo sin tarjetas todavía' : `${count} tarjetas`;
+    sb.setAttribute('aria-label', count === 0 ? `${DECKS[key].label}, mazo sin tarjetas todavía` : `${DECKS[key].label}, ${count} tarjetas`);
     sb.onclick = () => { currentDeck = key; resetDeck(); };
     sidebar.appendChild(sb);
   });
@@ -2182,6 +2548,10 @@ function resetDeck(){
   index = 0;
   setFlipped(false);
   buildDeckSwitch();
+  if(studyMode === 'lab'){
+    startLab();
+    return;
+  }
   render();
 }
 
@@ -2202,21 +2572,308 @@ function shuffle(){
   render();
 }
 
+function shuffledCopy(items){
+  const copy = [...items];
+  for(let i=copy.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]] = [copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function startLab(){
+  const eligible = DECKS[currentDeck].cards.filter(item => Array.isArray(item.parts) && item.parts.length >= 2);
+  labQueue = shuffledCopy(eligible).slice(0,Math.min(LAB_ROUNDS,eligible.length));
+  labRound = 0;
+  labScore = 0;
+  labStreak = 0;
+  labWorkbenchEl.hidden = false;
+  labSummaryEl.hidden = true;
+
+  if(!labQueue.length){
+    labClueEl.textContent = 'Este sistema todavía no tiene términos compuestos disponibles para el laboratorio.';
+    labSlotsEl.replaceChildren();
+    labPoolEl.replaceChildren();
+    labFeedbackEl.className = 'lab-feedback';
+    labFeedbackEl.textContent = 'Selecciona otro sistema para comenzar una práctica.';
+    labRoundStatEl.textContent = '0/0';
+    labScoreStatEl.textContent = '0';
+    labStreakStatEl.textContent = '0';
+    updateLabProgress(0);
+    labHintBtn.disabled = true;
+    labHintBtn.hidden = false;
+    labCheckBtn.disabled = true;
+    labCheckBtn.hidden = false;
+    labNextBtn.hidden = true;
+    return;
+  }
+
+  renderLabRound();
+}
+
+function updateLabProgress(percent){
+  const safePercent = Math.max(0,Math.min(100,percent));
+  labRoundBarEl.style.width = `${safePercent}%`;
+  const track = labRoundBarEl.parentElement;
+  track.setAttribute('aria-valuenow',String(Math.round(safePercent)));
+}
+
+function labTagLabel(tag){
+  if(tag === 'prefijo') return 'Prefijo';
+  if(tag === 'sufijo') return 'Sufijo';
+  return 'Raíz';
+}
+
+function renderLabRound(){
+  if(labRound >= labQueue.length){
+    finishLab();
+    return;
+  }
+
+  const item = labQueue[labRound];
+  labAttempts = 0;
+  labHintUsed = false;
+  labLocked = false;
+  labEvaluated = false;
+  labPlaced = Array(item.parts.length).fill(null);
+  labPoolOrder = shuffledCopy(item.parts.map((_,i)=>i));
+  if(item.parts.length > 1 && labPoolOrder.every((value,i)=>value === i)){
+    [labPoolOrder[0],labPoolOrder[1]] = [labPoolOrder[1],labPoolOrder[0]];
+  }
+
+  labClueEl.textContent = item.def;
+  labFeedbackEl.className = 'lab-feedback';
+  labFeedbackEl.textContent = 'Arrastra los fragmentos o selecciónalos para colocarlos en orden.';
+  labRoundStatEl.textContent = `${labRound+1}/${labQueue.length}`;
+  labScoreStatEl.textContent = String(labScore);
+  labStreakStatEl.textContent = String(labStreak);
+  updateLabProgress((labRound/labQueue.length)*100);
+  labHintBtn.disabled = false;
+  labHintBtn.hidden = false;
+  labCheckBtn.disabled = false;
+  labCheckBtn.hidden = false;
+  labNextBtn.hidden = true;
+  labNextBtn.textContent = labRound === labQueue.length-1 ? 'Ver resultado' : 'Siguiente término';
+  renderLabBoard();
+}
+
+function makeLabPiece(partIndex,location){
+  const item = labQueue[labRound];
+  const part = item.parts[partIndex];
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'lab-piece';
+  button.textContent = part.piece;
+  button.dataset.partIndex = String(partIndex);
+  button.draggable = !labLocked;
+  button.setAttribute('aria-label',`${part.piece}, ${labTagLabel(part.tag)}. ${location === 'pool' ? 'Seleccionar para colocar' : 'Seleccionar para retirar'}`);
+  button.addEventListener('dragstart',event => {
+    if(labLocked){ event.preventDefault(); return; }
+    event.dataTransfer.setData('text/plain',String(partIndex));
+    event.dataTransfer.effectAllowed = 'move';
+  });
+  button.addEventListener('click',() => {
+    if(labLocked) return;
+    if(location === 'pool'){
+      const emptySlot = labPlaced.findIndex(value => value === null);
+      if(emptySlot === -1){
+        setLabFeedback('Todos los espacios están ocupados. Retira un fragmento para cambiarlo.','error');
+        return;
+      }
+      placeLabPiece(partIndex,emptySlot);
+    }else{
+      returnLabPiece(partIndex);
+    }
+  });
+  return button;
+}
+
+function renderLabBoard(){
+  const item = labQueue[labRound];
+  labSlotsEl.replaceChildren();
+  item.parts.forEach((part,slotIndex) => {
+    const slot = document.createElement('div');
+    slot.className = 'lab-slot';
+    slot.dataset.slotIndex = String(slotIndex);
+    if(labEvaluated){
+      slot.classList.add(labPlaced[slotIndex] === slotIndex ? 'correct' : 'incorrect');
+    }
+    const type = document.createElement('span');
+    type.className = 'lab-slot-type';
+    type.textContent = labTagLabel(part.tag);
+    slot.appendChild(type);
+    if(labPlaced[slotIndex] === null){
+      const placeholder = document.createElement('span');
+      placeholder.className = 'lab-slot-placeholder';
+      placeholder.textContent = `Espacio ${slotIndex+1}`;
+      slot.appendChild(placeholder);
+    }else{
+      slot.appendChild(makeLabPiece(labPlaced[slotIndex],'slot'));
+    }
+    slot.addEventListener('dragover',event => {
+      if(labLocked) return;
+      event.preventDefault();
+      slot.classList.add('drag-over');
+    });
+    slot.addEventListener('dragleave',() => slot.classList.remove('drag-over'));
+    slot.addEventListener('drop',event => {
+      event.preventDefault();
+      slot.classList.remove('drag-over');
+      const rawPartIndex = event.dataTransfer.getData('text/plain');
+      const partIndex = Number(rawPartIndex);
+      if(rawPartIndex !== '' && Number.isInteger(partIndex)) placeLabPiece(partIndex,slotIndex);
+    });
+    labSlotsEl.appendChild(slot);
+  });
+
+  labPoolEl.replaceChildren();
+  labPoolOrder.filter(partIndex => !labPlaced.includes(partIndex)).forEach(partIndex => {
+    labPoolEl.appendChild(makeLabPiece(partIndex,'pool'));
+  });
+  if(!labPoolEl.children.length){
+    const empty = document.createElement('span');
+    empty.className = 'lab-slot-placeholder';
+    empty.textContent = 'Todos los fragmentos están colocados';
+    labPoolEl.appendChild(empty);
+  }
+}
+
+function handleLabPoolDragOver(event){
+  if(labLocked) return;
+  event.preventDefault();
+  labPoolEl.classList.add('drag-over');
+}
+
+function handleLabPoolDragLeave(){
+  labPoolEl.classList.remove('drag-over');
+}
+
+function handleLabPoolDrop(event){
+  event.preventDefault();
+  labPoolEl.classList.remove('drag-over');
+  const rawPartIndex = event.dataTransfer.getData('text/plain');
+  const partIndex = Number(rawPartIndex);
+  if(rawPartIndex !== '' && Number.isInteger(partIndex)) returnLabPiece(partIndex);
+}
+
+function placeLabPiece(partIndex,slotIndex){
+  if(labLocked || !Number.isInteger(partIndex) || !Number.isInteger(slotIndex)) return;
+  if(partIndex < 0 || partIndex >= labPlaced.length || slotIndex < 0 || slotIndex >= labPlaced.length) return;
+  const previousSlot = labPlaced.indexOf(partIndex);
+  if(previousSlot !== -1) labPlaced[previousSlot] = null;
+  labPlaced[slotIndex] = partIndex;
+  labEvaluated = false;
+  renderLabBoard();
+}
+
+function returnLabPiece(partIndex){
+  if(labLocked || !Number.isInteger(partIndex)) return;
+  const slotIndex = labPlaced.indexOf(partIndex);
+  if(slotIndex !== -1){
+    labPlaced[slotIndex] = null;
+    labEvaluated = false;
+    renderLabBoard();
+  }
+}
+
+function setLabFeedback(message,type=''){
+  labFeedbackEl.className = `lab-feedback${type ? ` ${type}` : ''}`;
+  labFeedbackEl.textContent = message;
+}
+
+function checkLabAnswer(){
+  if(labLocked) return;
+  if(labPlaced.some(value => value === null)){
+    setLabFeedback('Completa todos los espacios antes de comprobar la construcción.','error');
+    return;
+  }
+
+  const item = labQueue[labRound];
+  const correct = labPlaced.every((partIndex,slotIndex) => partIndex === slotIndex);
+  labEvaluated = true;
+
+  if(correct){
+    const earned = Math.max(40,100-(labAttempts*25)-(labHintUsed?15:0));
+    labScore += earned;
+    labStreak = labAttempts === 0 && !labHintUsed ? labStreak+1 : 0;
+    labLocked = true;
+    labScoreStatEl.textContent = String(labScore);
+    labStreakStatEl.textContent = String(labStreak);
+    updateLabProgress(((labRound+1)/labQueue.length)*100);
+    setLabFeedback(`¡Construcción correcta! ${item.term}: ${item.def} (+${earned} puntos).`,'success');
+    labHintBtn.disabled = true;
+    labCheckBtn.disabled = true;
+    labHintBtn.hidden = true;
+    labCheckBtn.hidden = true;
+    labNextBtn.hidden = false;
+  }else{
+    labAttempts += 1;
+    labStreak = 0;
+    labStreakStatEl.textContent = '0';
+    const correctPositions = labPlaced.filter((partIndex,slotIndex) => partIndex === slotIndex).length;
+    setLabFeedback(`${correctPositions} de ${item.parts.length} fragmentos están en su posición correcta. Reordena los marcados en rojo.`,'error');
+  }
+  renderLabBoard();
+}
+
+function showLabHint(){
+  if(labLocked || labHintUsed) return;
+  const targetSlot = labPlaced.findIndex((partIndex,slotIndex) => partIndex !== slotIndex);
+  if(targetSlot === -1) return;
+  const existingSlot = labPlaced.indexOf(targetSlot);
+  if(existingSlot !== -1) labPlaced[existingSlot] = null;
+  labPlaced[targetSlot] = targetSlot;
+  labHintUsed = true;
+  labEvaluated = false;
+  labHintBtn.disabled = true;
+  setLabFeedback(`Pista aplicada: el fragmento ${targetSlot+1} quedó en la posición correcta.`);
+  renderLabBoard();
+}
+
+function nextLabRound(){
+  if(!labLocked) return;
+  labRound += 1;
+  renderLabRound();
+}
+
+function finishLab(){
+  labWorkbenchEl.hidden = true;
+  labSummaryEl.hidden = false;
+  updateLabProgress(100);
+  labRoundStatEl.textContent = `${labQueue.length}/${labQueue.length}`;
+  const maximum = labQueue.length*100;
+  const percent = maximum ? Math.round((labScore/maximum)*100) : 0;
+  const badge = document.getElementById('labSummaryBadge');
+  badge.textContent = percent >= 80 ? '★' : percent >= 60 ? '✓' : '↻';
+  document.getElementById('labSummaryText').innerHTML = `Obtuviste <strong>${labScore} de ${maximum} puntos</strong> (${percent}%). ${percent >= 80 ? 'Dominas la construcción de estos términos.' : 'Puedes repetir el laboratorio para consolidar el orden de los fragmentos.'}`;
+}
+
 function render(){
   const deck = getCurrentCards();
   const c = deck[order[index]];
 
   if(!c){
-    termFront.textContent = 'Contenido próximamente';
-    termBack.textContent = 'Contenido próximamente';
-    definitionEl.textContent = 'Este mazo aún no contiene tarjetas.';
+    termFront.textContent = DECKS[currentDeck]?.label || 'Contenido próximamente';
+    termBack.textContent = DECKS[currentDeck]?.label || 'Contenido próximamente';
+    definitionEl.textContent = 'Este mazo está habilitado y listo para recibir contenido, pero todavía no contiene tarjetas.';
+    definitionLabelEl.textContent = 'Estado del mazo';
+    frontMetaEl.replaceChildren();
+    fragmentsEl.className = 'fragments';
     fragmentsEl.replaceChildren();
     clinicalVisualEl.replaceChildren();
     clinicalVisualEl.hidden = true;
     counterEl.textContent = `0 / ${deck.length}`;
     progressEl.replaceChildren();
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('shuffleBtn').disabled = true;
+    adjustCardHeight();
     return;
   }
+
+  document.getElementById('prevBtn').disabled = false;
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('shuffleBtn').disabled = false;
 
   termFront.textContent = c.term;
   termBack.textContent = c.term;
@@ -2326,6 +2983,13 @@ document.getElementById('prevBtn').onclick = ()=>{
   render();
 };
 document.getElementById('shuffleBtn').onclick = shuffle;
+labHintBtn.addEventListener('click',showLabHint);
+labCheckBtn.addEventListener('click',checkLabAnswer);
+labNextBtn.addEventListener('click',nextLabRound);
+document.getElementById('labRestartBtn').addEventListener('click',startLab);
+labPoolEl.addEventListener('dragover',handleLabPoolDragOver);
+labPoolEl.addEventListener('dragleave',handleLabPoolDragLeave);
+labPoolEl.addEventListener('drop',handleLabPoolDrop);
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.setAttribute('aria-pressed', String(btn.dataset.mode === studyMode));
   btn.addEventListener('click', () => setStudyMode(btn.dataset.mode));
@@ -2333,6 +2997,7 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
 
 document.addEventListener('keydown', (e)=>{
   if(e.target.closest('button, a, input, textarea, select, [contenteditable="true"], #card')) return;
+  if(studyMode === 'lab') return;
   if(e.key === 'ArrowRight') document.getElementById('nextBtn').click();
   if(e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
 });
